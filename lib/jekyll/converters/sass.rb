@@ -36,7 +36,12 @@ module Jekyll
       end
 
       def sass_dir_relative_to_site_source
-        Jekyll.sanitized_path(@config["source"], sass_dir)
+        # FIXME: Not Windows-safe. Can only change once Jekyll 2.0.0 is out
+        # Jekyll.sanitized_path(@config["source"], sass_dir)
+        File.join(
+          @config["source"],
+          File.expand_path(sass_dir, "/")
+        )
       end
 
       def allow_caching?
