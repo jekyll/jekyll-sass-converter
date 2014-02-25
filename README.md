@@ -1,8 +1,12 @@
-# Jekyll::Sass::Converter
+# Jekyll Sass Converter
 
-TODO: Write a gem description
+Let Jekyll build you Sass and SCSS!
+
+[![Build Status](https://travis-ci.org/jekyll/jekyll-sass-converter.png?branch=master)](https://travis-ci.org/jekyll/jekyll-sass-converter)
 
 ## Installation
+
+**Jekyll Sass Converter requires Jekyll 2.0.0 or greater.**
 
 Add this line to your application's Gemfile:
 
@@ -18,11 +22,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Jekyll Sass Converter comes bundled with Jekyll 2.0.0 and greater. For more
+information about usage, visit the [Jekyll Assets Documentation
+page](http://jekyllrb.com/docs/assets/).
 
 ## Contributing
 
-1. Fork it ( http://github.com/<my-github-username>/jekyll-sass-converter/fork )
+1. Fork it ( `http://github.com/<my-github-username>/jekyll-sass-converter/fork` )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
