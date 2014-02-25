@@ -1,3 +1,5 @@
+require 'sass'
+
 module Jekyll
   module Converters
     class Sass < Converter
