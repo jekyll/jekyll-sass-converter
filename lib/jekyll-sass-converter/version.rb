@@ -1,7 +1,3 @@
-module Jekyll
-  module Sass
-    module Converter
-      VERSION = "0.0.1"
-    end
-  end
+module JekyllSassConverter
+  VERSION = "1.0.0.alpha.1"
 end
