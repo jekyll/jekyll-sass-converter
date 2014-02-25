@@ -1,12 +1,13 @@
 # Jekyll Sass Converter
 
-Let Jekyll build you Sass and SCSS!
+Let Jekyll build your Sass and SCSS!
 
 [![Build Status](https://travis-ci.org/jekyll/jekyll-sass-converter.png?branch=master)](https://travis-ci.org/jekyll/jekyll-sass-converter)
 
 ## Installation
 
-**Jekyll Sass Converter requires Jekyll 2.0.0 or greater.**
+**Jekyll Sass Converter requires Jekyll 2.0.0 or greater and is bundled
+with Jekyll so you don't need to install it if you're already using Jekyll.**
 
 Add this line to your application's Gemfile:
 
