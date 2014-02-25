@@ -33,10 +33,7 @@ module Jekyll
     end
 
     def sass_dir_relative_to_site_source
-      File.join(
-        @config["source"],
-        File.expand_path(sass_dir, "/") # FIXME: Not windows-compatible
-      )
+      Jekyll.sanitized_path(@config["source"], sass_dir)
     end
 
     def allow_caching?
