@@ -26,9 +26,9 @@ RSpec.configure do |config|
   end
 
   def site_configuration(overrides = {})
-    Jekyll::Configuration::DEFAULTS.deep_merge(overrides).deep_merge({
+    Utils.hash_deep_merge(Jekyll::Configuration::DEFAULTS, overrides.merge({
       "source" => source_dir,
       "destination" => dest_dir
-    })
+    }))
   end
 end
