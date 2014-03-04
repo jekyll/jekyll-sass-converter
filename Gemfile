@@ -4,3 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem "jekyll", git: "git://github.com/jekyll/jekyll.git", branch: "no-core-ext"
+gem "rouge"
