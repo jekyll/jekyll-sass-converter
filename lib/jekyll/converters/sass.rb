@@ -20,8 +20,8 @@ module Jekyll
       end
 
       def sass_build_configuration_options(overrides)
-        Jekyll::Utils.hash_symbolize_keys(
-          Jekyll::Utils.hash_deep_merge(jekyll_sass_configuration, overrides)
+        Jekyll::Utils.symbolize_hash_keys(
+          Jekyll::Utils.deep_merge_hashes(jekyll_sass_configuration, overrides)
         )
       end
 
