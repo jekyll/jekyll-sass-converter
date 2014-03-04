@@ -1,4 +1,5 @@
 require 'sass'
+require 'jekyll/utils'
 
 module Jekyll
   module Converters
@@ -19,7 +20,9 @@ module Jekyll
       end
 
       def sass_build_configuration_options(overrides)
-        jekyll_sass_configuration.deep_merge(overrides).symbolize_keys
+        Jekyll::Utils.hash_symbolize_keys(
+          Jekyll::Utils.hash_deep_merge(jekyll_sass_configuration, overrides)
+        )
       end
 
       def syntax_type_of_content(content)
@@ -37,11 +40,7 @@ module Jekyll
 
       def sass_dir_relative_to_site_source
         # FIXME: Not Windows-safe. Can only change once Jekyll 2.0.0 is out
-        # Jekyll.sanitized_path(@config["source"], sass_dir)
-        File.join(
-          @config["source"],
-          File.expand_path(sass_dir, "/")
-        )
+        Jekyll.sanitized_path(@config["source"], sass_dir)
       end
 
       def allow_caching?
