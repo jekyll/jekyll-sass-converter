@@ -6,6 +6,8 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'jekyll-sass-converter'
 
+Jekyll.logger.log_level = Jekyll::Stevenson::ERROR
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
@@ -26,8 +28,8 @@ RSpec.configure do |config|
   end
 
   def site_configuration(overrides = {})
-    Jekyll::Utils.deep_merge_hashes(Jekyll::Configuration::DEFAULTS, overrides.merge({
-      "source" => source_dir,
+    Jekyll.configuration(overrides.merge({
+      "source"      => source_dir,
       "destination" => dest_dir
     }))
   end

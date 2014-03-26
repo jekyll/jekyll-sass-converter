@@ -27,6 +27,10 @@ body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
 CSS
   end
 
+  def compressed(content)
+    content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
+  end
+
   def converter(overrides = {})
     Jekyll::Converters::Sass.new(site_configuration({"sass" => overrides}))
   end
@@ -97,13 +101,13 @@ CSS
 
   context "converting sass" do
     it "produces CSS" do
-      expect(converter.convert(sass_content)).to eql(css_output)
+      expect(converter.convert(sass_content)).to eql(compressed(css_output))
     end
   end
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(scss_content)).to eql(css_output)
+      expect(converter.convert(scss_content)).to eql(compressed(css_output))
     end
   end
 
@@ -116,7 +120,13 @@ CSS
     end
 
     it "imports SCSS partial" do
-      expect(File.read(test_css_file)).to eql(".half {\n  width: 50%; }\n")
+      expect(File.read(test_css_file)).to eql(compressed(".half {\n  width: 50%; }\n"))
+    end
+
+    it "uses a compressed style" do
+      instance = site.getConverterImpl(Jekyll::Converters::Sass)
+      expect(instance.jekyll_sass_configuration).to eql({"style" => :compressed})
+      expect(instance.sass_configs[:style]).to eql(:compressed)
     end
   end
 end
