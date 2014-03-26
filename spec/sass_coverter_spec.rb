@@ -78,6 +78,10 @@ CSS
       expect(converter.sass_configs[:syntax]).to eql(:sass)
     end
 
+    it "allow for other styles" do
+      expect(converter({"style" => :compressed}).sass_configs[:style]).to eql(:compressed)
+    end
+
     it "not allow sass_dirs outside of site source" do
       expect(
         converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
