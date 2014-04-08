@@ -16,7 +16,11 @@ module Jekyll
       end
 
       def jekyll_sass_configuration
-        @config["sass"] || {}
+        options = @config["sass"] || {}
+        unless options["style"].nil?
+          options["style"] = options["style"].to_s.gsub(/\A:/, '').to_sym
+        end
+        options
       end
 
       def sass_build_configuration_options(overrides)
