@@ -6,6 +6,7 @@ describe(Jekyll::Converters::Sass) do
   end
   let(:sass_content) do
     <<-SASS
+// tl;dr some sass
 $font-stack: Helvetica, sans-serif
 body
   font-family: $font-stack
