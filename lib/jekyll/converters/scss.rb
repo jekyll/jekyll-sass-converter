@@ -29,7 +29,7 @@ module Jekyll
         )
       end
 
-      def sass_syntax
+      def syntax
         :scss
       end
 
@@ -49,8 +49,8 @@ module Jekyll
 
       def sass_configs(content = "")
         sass_build_configuration_options({
-          "syntax" => sass_syntax,
-          "cache"  => allow_caching?,
+          "syntax"     => syntax,
+          "cache"      => allow_caching?,
           "load_paths" => [sass_dir_relative_to_site_source]
         })
       end

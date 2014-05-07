@@ -11,7 +11,7 @@ module Jekyll
         ext =~ /^\.sass$/i
       end
 
-      def sass_syntax(content)
+      def syntax
         :sass
       end
     end
