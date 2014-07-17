@@ -54,7 +54,7 @@ module Jekyll
         if safe?
           [sass_dir_relative_to_site_source]
         else
-          user_sass_load_paths + [sass_dir_relative_to_site_source]
+          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
         end
       end
 

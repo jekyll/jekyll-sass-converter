@@ -29,11 +29,11 @@ CSS
 
   context "matching file extensions" do
     it "does not match .scss files" do
-      expect(converter.matches(".scss")).to be_false
+      expect(converter.matches(".scss")).to be_falsey
     end
 
     it "matches .sass files" do
-      expect(converter.matches(".sass")).to be_true
+      expect(converter.matches(".sass")).to be_truthy
     end
   end
 
