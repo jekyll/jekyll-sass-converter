@@ -6,7 +6,11 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'jekyll-sass-converter'
 
-Jekyll.logger.log_level = Jekyll::Stevenson::ERROR
+if Jekyll::VERSION > "1"
+  Jekyll.logger.log_level = :error
+else
+  Jekyll.logger.log_level = Jekyll::Stevenson::ERROR
+end
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
