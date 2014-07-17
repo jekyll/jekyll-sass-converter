@@ -125,6 +125,24 @@ CSS
         site.process
         expect(File.read(test_css_file)).to eql("a {\n  color: #999999; }\n")
       end
+
+      context "with the sass_dir specified twice" do
+        let(:site) do
+          Jekyll::Site.new(site_configuration.merge({
+            "source" => sass_lib,
+            "sass"   => {
+              "load_paths" => [
+                external_library,
+                sass_lib("_sass")
+              ]
+            }
+          }))
+        end
+
+        it "ensures the sass_dir only occurrs once in the load path" do
+          expect(verter.sass_load_paths).to eql([external_library, sass_lib("_sass")])
+        end
+      end
     end
 
     context "safe mode" do
