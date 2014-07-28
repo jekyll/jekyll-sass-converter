@@ -15,6 +15,10 @@ module Jekyll
         ".css"
       end
 
+      def safe?
+        !!@config["safe"]
+      end
+
       def jekyll_sass_configuration
         options = @config["sass"] || {}
         unless options["style"].nil?
@@ -38,25 +42,36 @@ module Jekyll
         jekyll_sass_configuration["sass_dir"]
       end
 
+      def user_sass_load_paths
+        Array(jekyll_sass_configuration["load_paths"])
+      end
+
       def sass_dir_relative_to_site_source
-        # FIXME: Not Windows-safe. Can only change once Jekyll 2.0.0 is out
         Jekyll.sanitized_path(@config["source"], sass_dir)
       end
 
-      def allow_caching?
-        !@config["safe"]
+      def sass_load_paths
+        if safe?
+          [sass_dir_relative_to_site_source]
+        else
+          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
+        end
       end
 
-      def sass_configs(content = "")
+      def allow_caching?
+        !safe?
+      end
+
+      def sass_configs
         sass_build_configuration_options({
           "syntax"     => syntax,
           "cache"      => allow_caching?,
-          "load_paths" => [sass_dir_relative_to_site_source]
+          "load_paths" => sass_load_paths
         })
       end
 
       def convert(content)
-        ::Sass.compile(content, sass_configs(content))
+        ::Sass.compile(content, sass_configs)
       end
     end
   end

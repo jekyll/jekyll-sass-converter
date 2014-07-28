@@ -29,11 +29,11 @@ CSS
 
   context "matching file extensions" do
     it "matches .scss files" do
-      expect(converter.matches(".scss")).to be_true
+      expect(converter.matches(".scss")).to be_truthy
     end
 
     it "does not match .sass files" do
-      expect(converter.matches(".sass")).to be_false
+      expect(converter.matches(".sass")).to be_falsey
     end
   end
 
@@ -47,11 +47,11 @@ CSS
     it "not allow caching in safe mode" do
       verter = converter
       verter.instance_variable_get(:@config)["safe"] = true
-      expect(verter.sass_configs[:cache]).to be_false
+      expect(verter.sass_configs[:cache]).to be_falsey
     end
 
     it "allow caching in unsafe mode" do
-      expect(converter.sass_configs[:cache]).to be_true
+      expect(converter.sass_configs[:cache]).to be_truthy
     end
 
     it "set the load paths to the _sass dir relative to site source" do
@@ -84,7 +84,7 @@ CSS
     before(:each) { site.process }
 
     it "outputs the CSS file" do
-      expect(File.exist?(test_css_file)).to be_true
+      expect(File.exist?(test_css_file)).to be_truthy
     end
 
     it "imports SCSS partial" do
@@ -96,6 +96,75 @@ CSS
       expect(instance.jekyll_sass_configuration).to eql({"style" => :compressed})
       expect(instance.sass_configs[:style]).to eql(:compressed)
     end
+  end
+
+  context "importing from external libraries" do
+    let(:external_library) { source_dir("_sass") }
+    let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+    let(:test_css_file) { dest_dir('css', 'main.css') }
+
+    context "unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "source" => sass_lib,
+          "sass"   => {
+            "load_paths" => external_library
+          }
+        }))
+      end
+
+      it "recognizes the new load path" do
+        expect(verter.sass_load_paths).to include(external_library)
+      end
+
+      it "ensures the sass_dir is still in the load path" do
+        expect(verter.sass_load_paths).to include(sass_lib("_sass"))
+      end
+
+      it "brings in the grid partial" do
+        site.process
+        expect(File.read(test_css_file)).to eql("a {\n  color: #999999; }\n")
+      end
+
+      context "with the sass_dir specified twice" do
+        let(:site) do
+          Jekyll::Site.new(site_configuration.merge({
+            "source" => sass_lib,
+            "sass"   => {
+              "load_paths" => [
+                external_library,
+                sass_lib("_sass")
+              ]
+            }
+          }))
+        end
+
+        it "ensures the sass_dir only occurrs once in the load path" do
+          expect(verter.sass_load_paths).to eql([external_library, sass_lib("_sass")])
+        end
+      end
+    end
+
+    context "safe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "safe"   => true,
+          "source" => sass_lib,
+          "sass"   => {
+            "load_paths" => external_library
+          }
+        }))
+      end
+
+      it "ignores the new load path" do
+        expect(verter.sass_load_paths).not_to include(external_library)
+      end
+
+      it "ensures the sass_dir is the entire load path" do
+        expect(verter.sass_load_paths).to eql([sass_lib("_sass")])
+      end
+    end
+
   end
 
 end
