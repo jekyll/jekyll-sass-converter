@@ -44,11 +44,6 @@ CSS
   end
 
   context "when building configurations" do
-    it "not allow caching in safe mode" do
-      verter = converter
-      verter.instance_variable_get(:@config)["safe"] = true
-      expect(verter.sass_configs[:cache]).to be_falsey
-    end
 
     it "allow caching in unsafe mode" do
       expect(converter.sass_configs[:cache]).to be_truthy
@@ -70,6 +65,26 @@ CSS
       expect(
         converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
       ).to eql(source_dir("etc/passwd"))
+    end
+
+    context "in safe mode" do
+      let(:verter) {
+        c = converter
+        c.instance_variable_get(:@config)["safe"] = true
+        c
+      }
+
+      it "does not allow caching" do
+        expect(verter.sass_configs[:cache]).to be_falsey
+      end
+
+      it "forces load_paths to be just the local load path" do
+        expect(verter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
+      end
+
+      it "only contains :syntax, :cache, and :load_paths keys" do
+        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :cache])
+      end
     end
   end
 
