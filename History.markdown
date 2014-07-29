@@ -3,6 +3,7 @@
 ### Minor Enhancements
 
   * Implement custom load paths (#14)
+  * Lock down sass configuration when in safe mode. (#15)
 
 ## 1.0.0 / 2014-05-06
 
