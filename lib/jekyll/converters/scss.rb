@@ -32,6 +32,7 @@ module Jekyll
           {
             :load_paths => sass_load_paths,
             :syntax     => syntax,
+            :style      => sass_style,
             :cache      => false
           }
         else
@@ -51,6 +52,10 @@ module Jekyll
       def sass_dir
         return "_sass" if jekyll_sass_configuration["sass_dir"].to_s.empty?
         jekyll_sass_configuration["sass_dir"]
+      end
+
+      def sass_style
+        jekyll_sass_configuration.fetch("style", :compact)
       end
 
       def user_sass_load_paths

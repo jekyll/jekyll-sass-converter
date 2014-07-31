@@ -69,9 +69,10 @@ CSS
 
     context "in safe mode" do
       let(:verter) {
-        c = converter
-        c.instance_variable_get(:@config)["safe"] = true
-        c
+        Jekyll::Converters::Scss.new(site.config.merge({
+          "sass" => {},
+          "safe" => true
+        }))
       }
 
       it "does not allow caching" do
@@ -82,8 +83,17 @@ CSS
         expect(verter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
       end
 
-      it "only contains :syntax, :cache, and :load_paths keys" do
-        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :cache])
+      it "allows the user to specify the style" do
+        allow(verter).to receive(:sass_style).and_return(:compressed)
+        expect(verter.sass_configs[:style]).to eql(:compressed)
+      end
+
+      it "defaults style to :compact" do
+        expect(verter.sass_configs[:style]).to eql(:compact)
+      end
+
+      it "only contains :syntax, :cache, :style, and :load_paths keys" do
+        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :style, :cache])
       end
     end
   end
