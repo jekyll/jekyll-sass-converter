@@ -4,6 +4,10 @@
 
   * Allow user to specify style in safe mode.
 
+### Development Fixes
+
+  * Only include the `lib/` files in the gem. (#17)
+
 ## 1.1.0 / 2014-07-29
 
 ### Minor Enhancements
