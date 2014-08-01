@@ -7,6 +7,8 @@ module Jekyll
       safe true
       priority :low
 
+      ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
+
       def matches(ext)
         ext =~ /^\.scss$/i
       end
@@ -32,6 +34,7 @@ module Jekyll
           {
             :load_paths => sass_load_paths,
             :syntax     => syntax,
+            :style      => sass_style,
             :cache      => false
           }
         else
@@ -51,6 +54,11 @@ module Jekyll
       def sass_dir
         return "_sass" if jekyll_sass_configuration["sass_dir"].to_s.empty?
         jekyll_sass_configuration["sass_dir"]
+      end
+
+      def sass_style
+        style = jekyll_sass_configuration.fetch("style", :compact)
+        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : :compact
       end
 
       def user_sass_load_paths
