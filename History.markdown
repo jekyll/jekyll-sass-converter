@@ -1,8 +1,8 @@
-## HEAD
+## 1.2.0 / 2014-07-31
 
 ### Minor Enhancements
 
-  * Allow user to specify style in safe mode.
+  * Allow user to specify style in safe mode. (#16)
 
 ### Development Fixes
 
