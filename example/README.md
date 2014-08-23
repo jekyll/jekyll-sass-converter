@@ -30,3 +30,22 @@ The output, in your `_site` directory, would look like this:
       | - print.css
 
 Boom! Now you have just your SCSS/Sass converted over to CSS with all the proper inputs.
+
+# Specify Sass Directories in Jekyll
+
+For this example, bower has installed bootstrap at `bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap.scss`
+
+In the Jekyll `_config.yml` file
+```
+sass:
+  sass_dir: "_my_sass_dir" # this line only needed if you use something other than default "_sass"
+  load_paths:  # add other load paths for sass files here
+    - "bower_components"
+    - "other_dir"
+```
+
+in your `main.scss` file:
+```
+@import "bootstrap-sass-official/assets/stylesheets/bootstrap.scss";
+```
+
