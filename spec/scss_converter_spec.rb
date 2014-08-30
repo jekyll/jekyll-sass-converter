@@ -53,18 +53,24 @@ CSS
       expect(converter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
     end
 
-    it "allow the user to specify a different sass dir" do
-      expect(converter({"sass_dir" => "_scss"}).sass_configs[:load_paths]).to eql([source_dir("_scss")])
-    end
-
     it "allow for other styles" do
       expect(converter({"style" => :compressed}).sass_configs[:style]).to eql(:compressed)
     end
 
-    it "not allow sass_dirs outside of site source" do
-      expect(
-        converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
-      ).to eql(source_dir("etc/passwd"))
+    context "when specifying sass dirs" do
+      context "when the sass dir exists" do
+        it "allow the user to specify a different sass dir" do
+          FileUtils.mkdir(source_dir('_scss'))
+          expect(converter({"sass_dir" => "_scss"}).sass_configs[:load_paths]).to eql([source_dir("_scss")])
+          FileUtils.rmdir(source_dir('_scss'))
+        end
+
+        it "not allow sass_dirs outside of site source" do
+          expect(
+            converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
+          ).to eql(source_dir("etc/passwd"))
+        end
+      end
     end
 
     context "in safe mode" do
@@ -124,7 +130,7 @@ CSS
   end
 
   context "importing from external libraries" do
-    let(:external_library) { source_dir("_sass") }
+    let(:external_library) { source_dir("bower_components/jquery") }
     let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
     let(:test_css_file) { dest_dir('css', 'main.css') }
 
@@ -136,6 +142,12 @@ CSS
             "load_paths" => external_library
           }
         }))
+      end
+      before(:each) do
+        FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
+      end
+      after(:each) do
+        FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
       end
 
       it "recognizes the new load path" do

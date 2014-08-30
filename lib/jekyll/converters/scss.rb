@@ -69,20 +69,12 @@ module Jekyll
         Jekyll.sanitized_path(@config["source"], sass_dir)
       end
 
-      def default_sass_load_path
-        if File.directory?(sass_dir_relative_to_site_source)
-          [sass_dir_relative_to_site_source]
-        else
-          []
-        end
-      end
-
       def sass_load_paths
         if safe?
-          default_sass_load_path
+          [sass_dir_relative_to_site_source]
         else
-          (user_sass_load_paths + default_sass_load_path).uniq
-        end
+          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
+        end.select { |load_path| File.directory?(load_path) }
       end
 
       def allow_caching?
