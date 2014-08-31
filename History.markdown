@@ -1,3 +1,7 @@
+## HEAD
+
+  * Only include something in the sass load path if it exists (#23)
+
 ## 1.2.0 / 2014-07-31
 
 ### Minor Enhancements
