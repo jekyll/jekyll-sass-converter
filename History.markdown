@@ -1,4 +1,4 @@
-## HEAD
+## 1.2.1 / 2014-08-30
 
   * Only include something in the sass load path if it exists (#23)
 
