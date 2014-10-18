@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'compass'
 
 describe(Jekyll::Converters::Scss) do
   let(:site) do
@@ -23,8 +24,13 @@ CSS
     content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
   end
 
-  def converter(overrides = {})
-    Jekyll::Converters::Scss.new(site_configuration({"sass" => overrides}))
+  def converter(overrides = {}, compass = false)
+    c = Jekyll::Converters::Scss.new(site_configuration({"sass" => overrides}))
+    # works as if compass is not installed
+    unless compass
+      def c.compass_sass_load_paths; []; end
+    end
+    c
   end
 
   context "matching file extensions" do
@@ -131,7 +137,12 @@ CSS
 
   context "importing from external libraries" do
     let(:external_library) { source_dir("bower_components/jquery") }
-    let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+    let(:verter) {
+      c = site.getConverterImpl(Jekyll::Converters::Scss)
+      # works as if compass is not installed
+      def c.compass_sass_load_paths; []; end
+      c
+    }
     let(:test_css_file) { dest_dir('css', 'main.css') }
 
     context "unsafe mode" do
@@ -204,4 +215,56 @@ CSS
 
   end
 
+  context "importing from compass libraries" do
+    let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+
+    context "unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "source" => sass_lib,
+        }))
+      end
+
+      it "recognizes the compass load path" do
+        expect(verter.sass_load_paths.map(&:to_s))
+          .to include(*Compass.configuration.sass_load_paths.map(&:to_s))
+      end
+    end
+
+    context "safe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "safe"   => true,
+          "source" => sass_lib,
+        }))
+      end
+
+      it "ignores the compass load path" do
+        expect(verter.sass_load_paths.map(&:to_s))
+          .not_to include(*Compass.configuration.sass_load_paths.map(&:to_s))
+      end
+    end
+
+  end
+
+  context "converting compass" do
+    let(:content) do
+      <<-SCSS
+@import "compass/css3";
+a { @include opacity(0.5); }
+SCSS
+    end
+    let(:css_output) do
+      <<-CSS
+a {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5
+}
+CSS
+    end
+
+    it "produces CSS" do
+      expect(converter({}, true).convert(content)).to eql(compressed(css_output))
+    end
+  end
 end
