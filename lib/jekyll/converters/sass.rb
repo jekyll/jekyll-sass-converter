@@ -1,5 +1,6 @@
 require 'sass'
 require 'jekyll/utils'
+require 'jekyll/converters/scss'
 
 module Jekyll
   module Converters
