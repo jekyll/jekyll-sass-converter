@@ -18,6 +18,11 @@ SASS
 body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
 CSS
   end
+  let(:invalid_content) do
+    <<-SASS
+font-family: $font-stack;
+SASS
+  end
 
   def compressed(content)
     content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
@@ -40,6 +45,13 @@ CSS
   context "converting sass" do
     it "produces CSS" do
       expect(converter.convert(content)).to eql(compressed(css_output))
+    end
+
+    it "includes the syntax error line in the syntax error message" do
+      error_message = "Invalid CSS after \"$font-stack\": expected expression (e.g. 1px, bold), was \";\" on line 1"
+      expect {
+        converter.convert(invalid_content)
+      }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
   end
 

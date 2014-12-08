@@ -4,6 +4,8 @@ require 'jekyll/utils'
 module Jekyll
   module Converters
     class Scss < Converter
+      SyntaxError = Class.new(ArgumentError)
+
       safe true
       priority :low
 
@@ -90,11 +92,9 @@ module Jekyll
       end
 
       def convert(content)
-        begin
-          ::Sass.compile(content, sass_configs)
-        rescue ::Sass::SyntaxError => e
-          raise StandardError.new("#{e.to_s} on line #{e.sass_line}")
-        end
+        ::Sass.compile(content, sass_configs)
+      rescue ::Sass::SyntaxError => e
+        raise SyntaxError.new("#{e.to_s} on line #{e.sass_line}")
       end
     end
   end
