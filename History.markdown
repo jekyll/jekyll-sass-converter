@@ -1,5 +1,9 @@
 ## HEAD
 
+### Minor Enhancements
+
+  * Include line number in syntax error message (#26)
+
 ### Development Fixes
 
   * Fix typo in SCSS converter spec filename (#27)
