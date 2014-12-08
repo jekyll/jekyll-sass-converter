@@ -18,6 +18,13 @@ SCSS
 body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
 CSS
   end
+  let(:invalid_content) do
+    <<-SCSS
+$font-stack: Helvetica
+body {
+  font-family: $font-stack;
+SCSS
+  end
 
   def compressed(content)
     content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
@@ -107,6 +114,13 @@ CSS
   context "converting SCSS" do
     it "produces CSS" do
       expect(converter.convert(content)).to eql(compressed(css_output))
+    end
+
+    it "includes the syntax error line in the syntax error message" do
+      error_message = 'Invalid CSS after "body ": expected selector or at-rule, was "{" on line 2'
+      expect {
+        converter.convert(invalid_content)
+      }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
   end
 
