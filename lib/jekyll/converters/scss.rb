@@ -90,7 +90,11 @@ module Jekyll
       end
 
       def convert(content)
-        ::Sass.compile(content, sass_configs)
+        begin
+          ::Sass.compile(content, sass_configs)
+        rescue ::Sass::SyntaxError => e
+          raise StandardError.new("#{e.to_s} on line #{e.sass_line}")
+        end
       end
     end
   end
