@@ -3,10 +3,12 @@
 ### Minor Enhancements
 
   * Include line number in syntax error message (#26)
+  * Raise a `Jekyll::Converters::Scss::SyntaxError` instead of just a `StandardError` (#29)
 
 ### Development Fixes
 
   * Fix typo in SCSS converter spec filename (#27)
+  * Add tests for custom syntax error handling (#29)
 
 ## 1.2.1 / 2014-08-30
 
