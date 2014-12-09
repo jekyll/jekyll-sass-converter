@@ -67,6 +67,13 @@ module Jekyll
         Array(jekyll_sass_configuration["load_paths"])
       end
 
+      def compass_sass_load_paths
+        require 'compass'
+        Compass.configuration.sass_load_paths
+      rescue LoadError
+        []
+      end
+
       def sass_dir_relative_to_site_source
         Jekyll.sanitized_path(@config["source"], sass_dir)
       end
@@ -75,8 +82,11 @@ module Jekyll
         if safe?
           [sass_dir_relative_to_site_source]
         else
-          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
-        end.select { |load_path| File.directory?(load_path) }
+          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq +
+            compass_sass_load_paths
+        end.select { |load_path|
+          !load_path.is_a?(String) || File.directory?(load_path)
+        }
       end
 
       def allow_caching?
