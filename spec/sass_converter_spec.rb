@@ -55,14 +55,14 @@ SASS
     end
 
     it "removes byte order mark from compressed Sass" do
-      result = converter({ "style" => :compressed }).convert("a\n  content: \"\"")
-      expect(result).to eql("@charset \"UTF-8\";a{content:\"\"}\n")
+      result = converter({ "style" => :compressed }).convert("a\n  content: \"\uF015\"")
+      expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
 
     it "does not include the charset if asked not to" do
-      result = converter({ "style" => :compressed, "add_charset" => false }).convert("a\n  content: \"\"")
-      expect(result).to eql("a{content:\"\"}\n")
+      result = converter({ "style" => :compressed, "add_charset" => false }).convert("a\n  content: \"\uF015\"")
+      expect(result).to eql("a{content:\"\uF015\"}\n")
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
