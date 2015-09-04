@@ -122,6 +122,18 @@ SCSS
         converter.convert(invalid_content)
       }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
+
+    it "removes byte order mark from compressed SCSS" do
+      result = converter({ "style" => :compressed }).convert("a{content:\"\"}")
+      expect(result).to eql("@charset \"UTF-8\";a{content:\"\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
+
+    it "does not include the charset if asked not to" do
+      result = converter({ "style" => :compressed, "add_charset" => false }).convert("a{content:\"\"}")
+      expect(result).to eql("a{content:\"\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
   end
 
   context "importing partials" do
