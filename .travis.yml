@@ -4,6 +4,8 @@ rvm:
 - 2.2
 - 2.1
 - 2.0
+cache: bundler
+sudo: false
 notifications:
   email: false
 
