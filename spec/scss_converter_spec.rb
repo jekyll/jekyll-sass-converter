@@ -137,7 +137,7 @@ SCSS
     end
 
     it "uses a compressed style" do
-      instance = site.getConverterImpl(Jekyll::Converters::Scss)
+      instance = scss_converter_instance(site)
       expect(instance.jekyll_sass_configuration).to eql({"style" => :compressed})
       expect(instance.sass_configs[:style]).to eql(:compressed)
     end
@@ -145,7 +145,7 @@ SCSS
 
   context "importing from external libraries" do
     let(:external_library) { source_dir("bower_components/jquery") }
-    let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+    let(:verter) { scss_converter_instance(site) }
     let(:test_css_file) { dest_dir('css', 'main.css') }
 
     context "unsafe mode" do
