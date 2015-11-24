@@ -41,4 +41,12 @@ RSpec.configure do |config|
       "destination" => dest_dir
     }))
   end
+
+  def scss_converter_instance(site)
+    if Jekyll::VERSION >= '3.0'
+      site.find_converter_instance(Jekyll::Converters::Scss)
+    else
+      site.getConverterImpl(Jekyll::Converters::Scss)
+    end
+  end
 end
