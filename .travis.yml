@@ -1,22 +1,32 @@
-language: ruby
-script : script/cibuild
-rvm:
-- 2.2
-- 2.1
-- 2.0
-cache: bundler
 sudo: false
-notifications:
-  email: false
-
-
+language: ruby
+rvm:
+- 2.0
+- 2.1
+- 2.2
 matrix:
   include:
-    - # Ruby 1.9
-      rvm: 1.9
-      env: JEKYLL_VERSION=2.0
-  fast_finish: true
+    - rvm: 1.9.3
+      env: JEKYLL_VERSION=2.5
 env:
-  - ""
-  - JEKYLL_VERSION=3.0
-  - JEKYLL_VERSION=2.0
+  matrix:
+    - ""
+    - JEKYLL_VERSION=2.5
+    - JEKYLL_VERSION=3.0
+branches:
+  only:
+    - master
+install:
+- travis_retry script/bootstrap
+script: script/cibuild
+notifications:
+  irc:
+    on_success: change
+    on_failure: change
+    channels:
+    - irc.freenode.org#jekyll
+    template:
+    - '%{repository}#%{build_number} %{message} %{build_url}'
+  email:
+    on_success: never
+    on_failure: change
