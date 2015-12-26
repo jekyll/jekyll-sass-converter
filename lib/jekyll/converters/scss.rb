@@ -1,4 +1,4 @@
-# encoding: utf-8:
+# encoding: utf-8
 
 require 'sass'
 require 'jekyll/utils'
@@ -87,11 +87,7 @@ module Jekyll
       end
 
       def add_charset?
-        if jekyll_sass_configuration["add_charset"].nil?
-          true
-        else
-          jekyll_sass_configuration["add_charset"]
-        end
+        !!jekyll_sass_configuration["add_charset"]
       end
 
       def sass_configs
