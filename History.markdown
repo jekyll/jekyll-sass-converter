@@ -4,6 +4,7 @@
 
   * Bump Sass to v3.4 and above. (#40)
   * Strip byte order mark from generated compressed Sass/SCSS (#39)
+  * Strip BOM by default, but don't add in the `@charset` by default (#42)
 
 ## Development Fixes
 
