@@ -3,6 +3,7 @@
 ## Minor Enhancements
 
   * Bump Sass to v3.4 and above. (#40)
+  * Strip byte order mark from generated compressed Sass/SCSS (#39)
 
 ## Development Fixes
 
