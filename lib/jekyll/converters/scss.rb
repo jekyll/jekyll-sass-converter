@@ -1,9 +1,12 @@
+# encoding: utf-8:
+
 require 'sass'
 require 'jekyll/utils'
 
 module Jekyll
   module Converters
     class Scss < Converter
+      BYTE_ORDER_MARK = /^\xEF\xBB\xBF/
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -83,6 +86,14 @@ module Jekyll
         !safe?
       end
 
+      def add_charset?
+        if jekyll_sass_configuration["add_charset"].nil?
+          true
+        else
+          jekyll_sass_configuration["add_charset"]
+        end
+      end
+
       def sass_configs
         sass_build_configuration_options({
           "syntax"     => syntax,
@@ -92,7 +103,9 @@ module Jekyll
       end
 
       def convert(content)
-        ::Sass.compile(content, sass_configs)
+        output = ::Sass.compile(content, sass_configs)
+        replacement = add_charset? ? '@charset "UTF-8";' : ''
+        output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::Sass::SyntaxError => e
         raise SyntaxError.new("#{e.to_s} on line #{e.sass_line}")
       end
