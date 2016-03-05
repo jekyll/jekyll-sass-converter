@@ -101,7 +101,6 @@ module Jekyll
       end
 
       def convert(content)
-        puts sass_configs
         output = ::Sass.compile(content, sass_configs)
         replacement = add_charset? ? '@charset "UTF-8";' : ''
         output.sub(BYTE_ORDER_MARK, replacement)
