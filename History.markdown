@@ -4,9 +4,14 @@
 
 ## 1.4.0 / 2015-12-25
 
+### Minor Enhancements
+
   * Bump Sass to v3.4 and above. (#40)
   * Strip byte order mark from generated compressed Sass/SCSS (#39)
-  * Strip BOM by default, but don't add in the `@charset` by default ## Development Fixes (#42)
+  * Strip BOM by default, but don't add in the `@charset` by default (#42)
+
+### Development Fixes
+
   * Add Jekyll 2 & 3 to test matrix (#41)
 
 ## 1.3.0 / 2014-12-07
