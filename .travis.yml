@@ -1,17 +1,20 @@
 sudo: false
 language: ruby
 rvm:
-- 2.0
-- 2.1
-- 2.2
+- 2.3.0
+- 2.2.4
+- 2.1.8
+- ruby-head
 matrix:
+  allow_failures:
+    - rvm: ruby-head
   include:
     - rvm: 1.9.3
       env: JEKYLL_VERSION=2.5
 env:
   matrix:
     - JEKYLL_VERSION=2.5
-    - JEKYLL_VERSION=3.0
+    - JEKYLL_VERSION=3.1
 branches:
   only:
     - master
