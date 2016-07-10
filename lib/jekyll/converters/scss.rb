@@ -79,7 +79,10 @@ module Jekyll
         end
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
-        paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
+        Dir.chdir(@config["source"]) do
+          paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
+          paths.map! { |path| File.expand_path(path) }
+        end
 
         paths.select { |path| File.directory?(path) }
       end
