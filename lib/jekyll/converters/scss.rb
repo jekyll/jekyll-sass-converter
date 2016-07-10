@@ -72,11 +72,16 @@ module Jekyll
       end
 
       def sass_load_paths
+        paths = (user_sass_load_paths + [sass_dir_relative_to_site_source])
+
         if safe?
-          [sass_dir_relative_to_site_source]
-        else
-          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
-        end.select { |load_path| File.directory?(load_path) }
+          paths.map! { |path| Jekyll.sanitized_path(@config["source"], path) }
+        end
+
+        # Expand file globs (e.g. `node_modules/*/node_modules` )
+        paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
+
+        paths.select { |path| File.directory?(path) }
       end
 
       def allow_caching?

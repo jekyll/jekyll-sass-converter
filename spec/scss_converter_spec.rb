@@ -83,7 +83,7 @@ SCSS
     context "in safe mode" do
       let(:verter) {
         Jekyll::Converters::Scss.new(site.config.merge({
-          "sass" => {},
+          "sass" => {"load_paths" => ["bower_components/*", Dir.tmpdir]},
           "safe" => true
         }))
       }
@@ -92,8 +92,11 @@ SCSS
         expect(verter.sass_configs[:cache]).to be_falsey
       end
 
-      it "forces load_paths to be just the local load path" do
-        expect(verter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
+      it "sanitizes and globs load_paths" do
+        expect(verter.sass_configs[:load_paths]).to eql([
+          source_dir("bower_components/jquery"),
+          source_dir("_sass")
+        ])
       end
 
       it "allows the user to specify the style" do
