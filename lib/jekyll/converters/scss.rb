@@ -80,8 +80,8 @@ module Jekyll
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(@config["source"]) do
-          paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
-          paths.map! { |path| File.expand_path(path) }
+          paths = paths.map { |path| Dir.glob(path) }.flatten.uniq.
+                        map { |path| File.expand_path(path) }
         end
 
         paths.select { |path| File.directory?(path) }
