@@ -106,7 +106,7 @@ SCSS
       end
 
       it "only contains :syntax, :cache, :style, and :load_paths keys" do
-        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :style, :cache])
+        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :style, :cache, :filesystem_importer])
       end
     end
   end
@@ -165,7 +165,9 @@ SCSS
         Jekyll::Site.new(site_configuration.merge({
           "source" => sass_lib,
           "sass"   => {
-            "load_paths" => external_library
+            "load_paths" => [
+              source_dir("bower_components/*")
+            ]
           }
         }))
       end
@@ -286,4 +288,42 @@ SCSS
       end
     end
   end
+
+  context "importing plain CSS" do
+    let(:converter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+
+    context "unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "sass"   => {
+            "load_paths" => ["bower_components"]
+          }
+        }))
+      end
+
+      it "imports css files" do
+        expect(converter.convert('@import "oldschool/oldschool";')).to match(
+          "body {\n  background: pink; }\n"
+        )
+      end
+    end
+
+    context "safe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "safe"   => true,
+          "sass"   => {
+            "load_paths" => ["bower_components"]
+          }
+        }))
+      end
+
+      it "imports css files" do
+        expect(converter.convert('@import "oldschool/oldschool";')).to match(
+          "body { background: pink; }\n"
+        )
+      end
+    end
+  end
+
 end

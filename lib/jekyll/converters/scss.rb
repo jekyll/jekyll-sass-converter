@@ -37,10 +37,11 @@ module Jekyll
       def sass_build_configuration_options(overrides)
         if safe?
           {
-            :load_paths => sass_load_paths,
-            :syntax     => syntax,
-            :style      => sass_style,
-            :cache      => false
+            :load_paths          => sass_load_paths,
+            :syntax              => syntax,
+            :style               => sass_style,
+            :cache               => false,
+            :filesystem_importer => Jekyll::Sass::Importer
           }
         else
           Jekyll::Utils.symbolize_hash_keys(
@@ -100,9 +101,10 @@ module Jekyll
 
       def sass_configs
         sass_build_configuration_options({
-          "syntax"     => syntax,
-          "cache"      => allow_caching?,
-          "load_paths" => sass_load_paths
+          "syntax"              => syntax,
+          "cache"               => allow_caching?,
+          "load_paths"          => sass_load_paths,
+          "filesystem_importer" => Jekyll::Sass::Importer
         })
       end
 
