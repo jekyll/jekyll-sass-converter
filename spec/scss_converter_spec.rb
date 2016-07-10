@@ -83,7 +83,7 @@ SCSS
     context "in safe mode" do
       let(:verter) {
         Jekyll::Converters::Scss.new(site.config.merge({
-          "sass" => {"load_paths" => ["bower_components/*", Dir.tmpdir]},
+          "sass" => {},
           "safe" => true
         }))
       }
@@ -92,11 +92,8 @@ SCSS
         expect(verter.sass_configs[:cache]).to be_falsey
       end
 
-      it "sanitizes and globs load_paths" do
-        expect(verter.sass_configs[:load_paths]).to eql([
-          source_dir("bower_components/jquery"),
-          source_dir("_sass")
-        ])
+      it "forces load_paths to be just the local load path" do
+        expect(verter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
       end
 
       it "allows the user to specify the style" do
@@ -221,4 +218,52 @@ SCSS
 
   end
 
+  context "importing from internal libraries" do
+    let(:internal_library) { source_dir("bower_components/jquery") }
+    let(:converter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+
+    before(:each) do
+      FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
+    end
+
+    after(:each) do
+      FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
+    end
+
+    context "unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "sass"   => {
+            "load_paths" => ["bower_components/*"]
+          }
+        }))
+      end
+
+      it "expands globs" do
+        expect(converter.sass_load_paths).to include(internal_library)
+      end
+    end
+
+    context "safe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "safe"   => true,
+          "sass"   => {
+            "load_paths" => [
+              "bower_components/*",
+              Dir.tmpdir
+            ]
+          }
+        }))
+      end
+
+      it "allows local load paths" do
+        expect(converter.sass_load_paths).to include(internal_library)
+      end
+
+      it "ignores external load paths" do
+        expect(converter.sass_load_paths).not_to include(Dir.tmpdir)
+      end
+    end
+  end
 end
