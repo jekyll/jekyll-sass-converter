@@ -173,7 +173,7 @@ SCSS
         FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
       end
       after(:each) do
-        FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
+        FileUtils.rmdir(external_library) if File.directory?(external_library)
       end
 
       it "recognizes the new load path" do
@@ -239,7 +239,7 @@ SCSS
     end
 
     after(:each) do
-      FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
+      FileUtils.rmdir(internal_library) if File.directory?(internal_library)
     end
 
     context "unsafe mode" do
