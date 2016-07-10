@@ -5,21 +5,9 @@ rvm:
 - 2.2.4
 - 2.1.8
 - ruby-head
-matrix:
-  allow_failures:
-    - rvm: ruby-head
-  include:
-    - rvm: 1.9.3
-      env: JEKYLL_VERSION=2.5
-env:
-  matrix:
-    - JEKYLL_VERSION=2.5
-    - JEKYLL_VERSION=3.1
 branches:
   only:
     - master
-install:
-- travis_retry script/bootstrap
 script: script/cibuild
 notifications:
   irc:
