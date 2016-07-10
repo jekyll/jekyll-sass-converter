@@ -251,7 +251,8 @@ SCSS
           "sass"   => {
             "load_paths" => [
               "bower_components/*",
-              Dir.tmpdir
+              Dir.tmpdir,
+              "../.."
             ]
           }
         }))
@@ -263,6 +264,13 @@ SCSS
 
       it "ignores external load paths" do
         expect(converter.sass_load_paths).not_to include(Dir.tmpdir)
+      end
+
+      it "does not allow traversing outside source directory" do
+        converter.sass_load_paths.each do |path|
+          expect(path).to include(source_dir)
+          expect(path).not_to include('..')
+        end
       end
     end
   end
