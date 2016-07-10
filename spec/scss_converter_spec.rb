@@ -232,7 +232,7 @@ SCSS
 
   context "importing from internal libraries" do
     let(:internal_library) { source_dir("bower_components/jquery") }
-    let(:converter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+    let(:converter) { scss_converter_instance(site) }
 
     before(:each) do
       FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
