@@ -122,6 +122,18 @@ SCSS
         converter.convert(invalid_content)
       }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
+
+    it "removes byte order mark from compressed SCSS" do
+      result = converter({ "style" => :compressed }).convert("a{content:\"\uF015\"}")
+      expect(result).to eql("a{content:\"\uF015\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
+
+    it "does not include the charset unless asked to" do
+      result = converter({ "style" => :compressed, "add_charset" => true }).convert("a{content:\"\uF015\"}")
+      expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
   end
 
   context "importing partials" do
@@ -137,7 +149,7 @@ SCSS
     end
 
     it "uses a compressed style" do
-      instance = site.getConverterImpl(Jekyll::Converters::Scss)
+      instance = scss_converter_instance(site)
       expect(instance.jekyll_sass_configuration).to eql({"style" => :compressed})
       expect(instance.sass_configs[:style]).to eql(:compressed)
     end
@@ -145,7 +157,7 @@ SCSS
 
   context "importing from external libraries" do
     let(:external_library) { source_dir("bower_components/jquery") }
-    let(:verter) { site.getConverterImpl(Jekyll::Converters::Scss) }
+    let(:verter) { scss_converter_instance(site) }
     let(:test_css_file) { dest_dir('css', 'main.css') }
 
     context "unsafe mode" do

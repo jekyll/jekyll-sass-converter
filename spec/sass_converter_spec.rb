@@ -53,6 +53,17 @@ SASS
         converter.convert(invalid_content)
       }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
-  end
 
+    it "removes byte order mark from compressed Sass" do
+      result = converter({ "style" => :compressed }).convert("a\n  content: \"\uF015\"")
+      expect(result).to eql("a{content:\"\uF015\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
+
+    it "does not include the charset if asked not to" do
+      result = converter({ "style" => :compressed, "add_charset" => true }).convert("a\n  content: \"\uF015\"")
+      expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
+      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    end
+  end
 end
