@@ -2,6 +2,10 @@
 
   * Match Ruby versions with jekyll/jekyll (#46)
 
+### Development Fixes
+
+  * Don't test Jekyll 2.5 against Ruby 2.3. (#52)
+
 ## 1.4.0 / 2015-12-25
 
 ### Minor Enhancements
