@@ -74,8 +74,8 @@ SCSS
 
         it "not allow sass_dirs outside of site source" do
           expect(
-            converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
-          ).to eql(source_dir("etc/passwd"))
+            converter({"sass_dir" => "/etc/passwd"}).sass_load_paths_relative_to_site_source
+          ).to eql([source_dir("etc/passwd")])
         end
       end
     end

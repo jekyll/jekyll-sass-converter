@@ -70,15 +70,17 @@ module Jekyll
         Array(jekyll_sass_configuration["load_paths"])
       end
 
-      def sass_dir_relative_to_site_source
-        Jekyll.sanitized_path(@config["source"], sass_dir)
+      def sass_load_paths_relative_to_site_source
+        Array(sass_dir).map do |dir|
+          Jekyll.sanitized_path(@config["source"], dir)
+        end
       end
 
       def sass_load_paths
         if safe?
-          [sass_dir_relative_to_site_source]
+          sass_load_paths_relative_to_site_source
         else
-          (user_sass_load_paths + [sass_dir_relative_to_site_source]).uniq
+          (user_sass_load_paths + sass_load_paths_relative_to_site_source).uniq
         end.select { |load_path| File.directory?(load_path) }
       end
 
