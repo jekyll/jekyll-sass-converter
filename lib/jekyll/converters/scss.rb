@@ -71,7 +71,7 @@ module Jekyll
       end
 
       def sass_dir_relative_to_site_source
-        Jekyll.sanitized_path(@config["source"], sass_dir)
+        Jekyll.sanitized_path(site_source, sass_dir)
       end
 
       def sass_load_paths
@@ -79,17 +79,17 @@ module Jekyll
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
-          paths.map! { |path| Jekyll.sanitized_path(@config["source"], path) }
+          paths.map! { |path| Jekyll.sanitized_path(site_source, path) }
         end
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
-        Dir.chdir(@config["source"]) do
+        Dir.chdir(site_source) do
           paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
 
           paths.map! do |path|
             if safe?
               # Sanitize again in case globbing was able to do something crazy.
-              Jekyll.sanitized_path(@config["source"], path)
+              Jekyll.sanitized_path(site_source, path)
             else
               File.expand_path(path)
             end
@@ -121,6 +121,11 @@ module Jekyll
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::Sass::SyntaxError => e
         raise SyntaxError.new("#{e.to_s} on line #{e.sass_line}")
+      end
+
+      private
+      def site_source
+        @site_source ||= File.expand_path(@config["source"]).freeze
       end
     end
   end
