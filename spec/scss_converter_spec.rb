@@ -173,7 +173,7 @@ SCSS
         FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
       end
       after(:each) do
-        FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
+        FileUtils.rmdir(external_library) if File.directory?(external_library)
       end
 
       it "recognizes the new load path" do
@@ -230,4 +230,60 @@ SCSS
 
   end
 
+  context "importing from internal libraries" do
+    let(:internal_library) { source_dir("bower_components/jquery") }
+    let(:converter) { scss_converter_instance(site) }
+
+    before(:each) do
+      FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
+    end
+
+    after(:each) do
+      FileUtils.rmdir(internal_library) if File.directory?(internal_library)
+    end
+
+    context "unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "sass"   => {
+            "load_paths" => ["bower_components/*"]
+          }
+        }))
+      end
+
+      it "expands globs" do
+        expect(converter.sass_load_paths).to include(internal_library)
+      end
+    end
+
+    context "safe mode" do
+      let(:site) do
+        Jekyll::Site.new(site_configuration.merge({
+          "safe"   => true,
+          "sass"   => {
+            "load_paths" => [
+              "bower_components/*",
+              Dir.tmpdir,
+              "../.."
+            ]
+          }
+        }))
+      end
+
+      it "allows local load paths" do
+        expect(converter.sass_load_paths).to include(internal_library)
+      end
+
+      it "ignores external load paths" do
+        expect(converter.sass_load_paths).not_to include(Dir.tmpdir)
+      end
+
+      it "does not allow traversing outside source directory" do
+        converter.sass_load_paths.each do |path|
+          expect(path).to include(source_dir)
+          expect(path).not_to include('..')
+        end
+      end
+    end
+  end
 end
