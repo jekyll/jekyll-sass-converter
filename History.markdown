@@ -1,15 +1,9 @@
-## HEAD
+## 1.5.0 / 2016-11-14
 
+  * Allow `load_paths` in safe mode with sanitization (#50)
+  * SCSS converter: expand @config["source"] to be "safer". (#55)
   * Match Ruby versions with jekyll/jekyll (#46)
   * Don't test Jekyll 2.5 against Ruby 2.3. (#52)
-
-### Minor Enhancements
-
-  * Allow load_paths in safe mode with sanitization (#50)
-
-### Bug Fixes
-
-  * SCSS converter: expand @config["source"] to be "safer". (#55)
 
 ## 1.4.0 / 2015-12-25
 
