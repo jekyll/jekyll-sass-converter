@@ -7,6 +7,10 @@
 
   * Allow load_paths in safe mode with sanitization (#50)
 
+### Bug Fixes
+
+  * SCSS converter: expand @config["source"] to be "safer". (#55)
+
 ## 1.4.0 / 2015-12-25
 
 ### Minor Enhancements
