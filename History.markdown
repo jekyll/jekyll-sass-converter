@@ -3,6 +3,10 @@
   * Match Ruby versions with jekyll/jekyll (#46)
   * Don't test Jekyll 2.5 against Ruby 2.3. (#52)
 
+### Minor Enhancements
+
+  * Allow load_paths in safe mode with sanitization (#50)
+
 ## 1.4.0 / 2015-12-25
 
 ### Minor Enhancements
