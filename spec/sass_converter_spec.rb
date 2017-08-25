@@ -1,4 +1,6 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 describe(Jekyll::Converters::Sass) do
   let(:site) do
@@ -25,11 +27,11 @@ SASS
   end
 
   def compressed(content)
-    content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
+    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Sass.new(site_configuration({"sass" => overrides}))
+    Jekyll::Converters::Sass.new(site_configuration({ "sass" => overrides }))
   end
 
   context "matching file extensions" do
@@ -49,9 +51,9 @@ SASS
 
     it "includes the syntax error line in the syntax error message" do
       error_message = "Invalid CSS after \"$font-stack\": expected expression (e.g. 1px, bold), was \";\" on line 1"
-      expect {
+      expect do
         converter.convert(invalid_content)
-      }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
 
     it "removes byte order mark from compressed Sass" do

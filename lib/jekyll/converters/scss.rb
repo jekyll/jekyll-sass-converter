@@ -1,12 +1,12 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
-require 'sass'
-require 'jekyll/utils'
+require "sass"
+require "jekyll/utils"
 
 module Jekyll
   module Converters
     class Scss < Converter
-      BYTE_ORDER_MARK = /^\xEF\xBB\xBF/
+      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -15,10 +15,10 @@ module Jekyll
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       def matches(ext)
-        ext =~ /^\.scss$/i
+        ext =~ %r!^\.scss$!i
       end
 
-      def output_ext(ext)
+      def output_ext(_ext)
         ".css"
       end
 
@@ -29,7 +29,7 @@ module Jekyll
       def jekyll_sass_configuration
         options = @config["sass"] || {}
         unless options["style"].nil?
-          options["style"] = options["style"].to_s.gsub(/\A:/, '').to_sym
+          options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
         end
         options
       end
@@ -40,7 +40,7 @@ module Jekyll
             :load_paths => sass_load_paths,
             :syntax     => syntax,
             :style      => sass_style,
-            :cache      => false
+            :cache      => false,
           }
         else
           Jekyll::Utils.symbolize_hash_keys(
@@ -111,16 +111,16 @@ module Jekyll
         sass_build_configuration_options({
           "syntax"     => syntax,
           "cache"      => allow_caching?,
-          "load_paths" => sass_load_paths
+          "load_paths" => sass_load_paths,
         })
       end
 
       def convert(content)
         output = ::Sass.compile(content, sass_configs)
-        replacement = add_charset? ? '@charset "UTF-8";' : ''
+        replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::Sass::SyntaxError => e
-        raise SyntaxError.new("#{e.to_s} on line #{e.sass_line}")
+        raise SyntaxError, "#{e} on line #{e.sass_line}"
       end
 
       private
