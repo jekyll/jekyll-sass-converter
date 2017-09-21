@@ -134,6 +134,13 @@ SCSS
       expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
+
+    it "does not include source line-number comments unless asked to debug uncompressed CSS" do
+      debug_uncompressed = converter({ "style" => :nested, "debug" => true }).convert(content)
+      debug_compressed = converter({ "style" => :compressed, "debug" => true }).convert(content)
+      expect(debug_uncompressed).to eql("/* line 2 */\n#{css_output}")
+      expect(debug_compressed).to eql(compressed(css_output))
+    end
   end
 
   context "importing partials" do

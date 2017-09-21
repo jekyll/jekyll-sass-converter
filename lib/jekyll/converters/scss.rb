@@ -31,6 +31,7 @@ module Jekyll
         unless options["style"].nil?
           options["style"] = options["style"].to_s.gsub(/\A:/, '').to_sym
         end
+        options["line_numbers"] = true if !!options["debug"]
         options
       end
 
