@@ -1,6 +1,8 @@
-require 'sass'
-require 'jekyll/utils'
-require 'jekyll/converters/scss'
+# frozen_string_literal: true
+
+require "sass"
+require "jekyll/utils"
+require "jekyll/converters/scss"
 
 module Jekyll
   module Converters
@@ -9,7 +11,7 @@ module Jekyll
       priority :low
 
       def matches(ext)
-        ext =~ /^\.sass$/i
+        ext =~ %r!^\.sass$!i
       end
 
       def syntax

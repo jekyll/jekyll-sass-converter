@@ -1,4 +1,6 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 describe(Jekyll::Converters::Scss) do
   let(:site) do
@@ -27,11 +29,11 @@ SCSS
   end
 
   def compressed(content)
-    content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
+    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Scss.new(site_configuration({"sass" => overrides}))
+    Jekyll::Converters::Scss.new(site_configuration({ "sass" => overrides }))
   end
 
   context "matching file extensions" do
@@ -51,7 +53,6 @@ SCSS
   end
 
   context "when building configurations" do
-
     it "allow caching in unsafe mode" do
       expect(converter.sass_configs[:cache]).to be_truthy
     end
@@ -61,32 +62,32 @@ SCSS
     end
 
     it "allow for other styles" do
-      expect(converter({"style" => :compressed}).sass_configs[:style]).to eql(:compressed)
+      expect(converter({ "style" => :compressed }).sass_configs[:style]).to eql(:compressed)
     end
 
     context "when specifying sass dirs" do
       context "when the sass dir exists" do
         it "allow the user to specify a different sass dir" do
-          FileUtils.mkdir(source_dir('_scss'))
-          expect(converter({"sass_dir" => "_scss"}).sass_configs[:load_paths]).to eql([source_dir("_scss")])
-          FileUtils.rmdir(source_dir('_scss'))
+          FileUtils.mkdir(source_dir("_scss"))
+          expect(converter({ "sass_dir" => "_scss" }).sass_configs[:load_paths]).to eql([source_dir("_scss")])
+          FileUtils.rmdir(source_dir("_scss"))
         end
 
         it "not allow sass_dirs outside of site source" do
           expect(
-            converter({"sass_dir" => "/etc/passwd"}).sass_dir_relative_to_site_source
+            converter({ "sass_dir" => "/etc/passwd" }).sass_dir_relative_to_site_source
           ).to eql(source_dir("etc/passwd"))
         end
       end
     end
 
     context "in safe mode" do
-      let(:verter) {
+      let(:verter) do
         Jekyll::Converters::Scss.new(site.config.merge({
           "sass" => {},
-          "safe" => true
+          "safe" => true,
         }))
-      }
+      end
 
       it "does not allow caching" do
         expect(verter.sass_configs[:cache]).to be_falsey
@@ -118,9 +119,9 @@ SCSS
 
     it "includes the syntax error line in the syntax error message" do
       error_message = 'Invalid CSS after "body ": expected selector or at-rule, was "{" on line 2'
-      expect {
+      expect do
         converter.convert(invalid_content)
-      }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
 
     it "removes byte order mark from compressed SCSS" do
@@ -150,7 +151,7 @@ SCSS
 
     it "uses a compressed style" do
       instance = scss_converter_instance(site)
-      expect(instance.jekyll_sass_configuration).to eql({"style" => :compressed})
+      expect(instance.jekyll_sass_configuration).to eql({ "style" => :compressed })
       expect(instance.sass_configs[:style]).to eql(:compressed)
     end
   end
@@ -158,15 +159,15 @@ SCSS
   context "importing from external libraries" do
     let(:external_library) { source_dir("bower_components/jquery") }
     let(:verter) { scss_converter_instance(site) }
-    let(:test_css_file) { dest_dir('css', 'main.css') }
+    let(:test_css_file) { dest_dir("css", "main.css") }
 
     context "unsafe mode" do
       let(:site) do
         Jekyll::Site.new(site_configuration.merge({
           "source" => sass_lib,
           "sass"   => {
-            "load_paths" => external_library
-          }
+            "load_paths" => external_library,
+          },
         }))
       end
       before(:each) do
@@ -196,9 +197,9 @@ SCSS
             "sass"   => {
               "load_paths" => [
                 external_library,
-                sass_lib("_sass")
-              ]
-            }
+                sass_lib("_sass"),
+              ],
+            },
           }))
         end
 
@@ -214,8 +215,8 @@ SCSS
           "safe"   => true,
           "source" => sass_lib,
           "sass"   => {
-            "load_paths" => external_library
-          }
+            "load_paths" => external_library,
+          },
         }))
       end
 
@@ -227,7 +228,6 @@ SCSS
         expect(verter.sass_load_paths).to eql([sass_lib("_sass")])
       end
     end
-
   end
 
   context "importing from internal libraries" do
@@ -245,9 +245,9 @@ SCSS
     context "unsafe mode" do
       let(:site) do
         Jekyll::Site.new(site_configuration.merge({
-          "sass"   => {
-            "load_paths" => ["bower_components/*"]
-          }
+          "sass" => {
+            "load_paths" => ["bower_components/*"],
+          },
         }))
       end
 
@@ -259,14 +259,14 @@ SCSS
     context "safe mode" do
       let(:site) do
         Jekyll::Site.new(site_configuration.merge({
-          "safe"   => true,
-          "sass"   => {
+          "safe" => true,
+          "sass" => {
             "load_paths" => [
               "bower_components/*",
               Dir.tmpdir,
-              "../.."
-            ]
-          }
+              "../..",
+            ],
+          },
         }))
       end
 
@@ -281,7 +281,7 @@ SCSS
       it "does not allow traversing outside source directory" do
         converter.sass_load_paths.each do |path|
           expect(path).to include(source_dir)
-          expect(path).not_to include('..')
+          expect(path).not_to include("..")
         end
       end
     end

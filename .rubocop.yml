@@ -1,0 +1,15 @@
+inherit_gem:
+  jekyll: .rubocop.yml
+
+Metrics/LineLength:
+  Exclude:
+    - spec/**/*
+    - jekyll-sass-converter.gemspec
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
+Style/IndentHeredoc:
+  Exclude:
+    - spec/**/*
