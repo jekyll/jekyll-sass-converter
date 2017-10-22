@@ -1,3 +1,9 @@
+## HEAD
+
+### Development Fixes
+
+  * Modernize Travis config (#62)
+
 ## 1.5.0 / 2016-11-14
 
   * Allow `load_paths` in safe mode with sanitization (#50)
