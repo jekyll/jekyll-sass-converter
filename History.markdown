@@ -4,6 +4,7 @@
 
   * Modernize Travis config (#62)
   * Inherit Jekyll&#39;s rubocop config for consistency (#61)
+  * Define path with __dir__ (#60)
 
 ## 1.5.0 / 2016-11-14
 
