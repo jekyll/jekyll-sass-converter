@@ -12,7 +12,6 @@ matrix:
       env: JEKYLL_VERSION=3.5
 env:
   matrix:
-    - JEKYLL_VERSION=2.5
     - JEKYLL_VERSION=3.5
 branches:
   only:
