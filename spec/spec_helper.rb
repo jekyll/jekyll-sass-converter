@@ -3,24 +3,20 @@
 require "fileutils"
 require "jekyll"
 
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path("lib", __dir__)
+
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "jekyll-sass-converter"
 
-Jekyll.logger.log_level = if Jekyll::VERSION > "1"
-                            :error
-                          else
-                            Jekyll::Stevenson::ERROR
-                          end
-
+Jekyll.logger.log_level = :error
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
   config.order = "random"
 
-  SOURCE_DIR   = File.expand_path("../source", __FILE__)
-  DEST_DIR     = File.expand_path("../dest",   __FILE__)
-  SASS_LIB_DIR = File.expand_path("../other_sass_library", __FILE__)
+  SOURCE_DIR   = File.expand_path("source", __dir__)
+  DEST_DIR     = File.expand_path("dest",   __dir__)
+  SASS_LIB_DIR = File.expand_path("other_sass_library", __dir__)
   FileUtils.rm_rf(DEST_DIR)
   FileUtils.mkdir_p(DEST_DIR)
 
