@@ -57,6 +57,10 @@ SCSS
       expect(converter.sass_configs[:cache]).to be_truthy
     end
 
+    it "sets the cache location" do
+      expect(converter.sass_configs[:cache_location]).to eql(source_dir(".sass-cache"))
+    end
+
     it "set the load paths to the _sass dir relative to site source" do
       expect(converter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
     end
