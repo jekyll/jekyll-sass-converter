@@ -103,15 +103,20 @@ module Jekyll
         !safe?
       end
 
+      def cache_location
+        @cache_location ||= Jekyll.sanitized_path(site_source, ".sass-cache")
+      end
+
       def add_charset?
         !!jekyll_sass_configuration["add_charset"]
       end
 
       def sass_configs
         sass_build_configuration_options({
-          "syntax"     => syntax,
-          "cache"      => allow_caching?,
-          "load_paths" => sass_load_paths,
+          "syntax"         => syntax,
+          "cache"          => allow_caching?,
+          "load_paths"     => sass_load_paths,
+          "cache_location" => cache_location,
         })
       end
 
