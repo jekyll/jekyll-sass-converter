@@ -22,5 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "jekyll", ">= 2.0"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
-  spec.add_development_dependency "rubocop", "~> 0.5"
+  spec.add_development_dependency "rubocop", "~> 0.51"
 end
