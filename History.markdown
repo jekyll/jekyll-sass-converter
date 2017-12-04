@@ -1,10 +1,17 @@
 ## HEAD
 
+## 1.5.1 / 2017-12-02
+
+### Minor
+
+  * Security: Bump Rubocop to 0.51
+
 ### Development Fixes
 
-  * Modernize Travis config (#62)
+  * Drop support for Jekyll 2.x and Ruby 2.0 (#62)
   * Inherit Jekyll&#39;s rubocop config for consistency (#61)
   * Define path with __dir__ (#60)
+  * Fix script/release
 
 ## 1.5.0 / 2016-11-14
 
