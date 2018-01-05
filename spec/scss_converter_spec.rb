@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "tmpdir"
 
 describe(Jekyll::Converters::Scss) do
   let(:site) do
