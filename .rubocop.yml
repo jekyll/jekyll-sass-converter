@@ -1,15 +1,9 @@
 inherit_gem:
   jekyll: .rubocop.yml
 
+AllCops:
+  TargetRubyVersion: 2.3
+
 Metrics/LineLength:
   Exclude:
-    - spec/**/*
     - jekyll-sass-converter.gemspec
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*
-
-Layout/IndentHeredoc:
-  Exclude:
-    - spec/**/*
