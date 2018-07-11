@@ -1,3 +1,9 @@
+## HEAD
+
+### Minor Enhancements
+
+  * Target Ruby 2.3 (#70)
+
 ## 1.5.2 / 2017-02-03
 
 ### Development Fixes
