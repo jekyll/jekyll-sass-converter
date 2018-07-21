@@ -119,7 +119,7 @@ SCSS
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = 'Invalid CSS after "body ": expected selector or at-rule, was "{" on line 2'
+      error_message = %r!\AError: Invalid CSS after "body": expected 1 selector or at-rule, was "{"\s+on line 2!
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
