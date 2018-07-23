@@ -7,6 +7,7 @@
 ### Development Fixes
 
   * Add appveyor.yml (#76)
+  * Lint with rubocop-jekyll (#73)
 
 ## 1.5.2 / 2017-02-03
 
