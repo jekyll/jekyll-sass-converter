@@ -3,6 +3,7 @@
 Let Jekyll build your Sass and SCSS!
 
 [![Build Status](https://travis-ci.org/jekyll/jekyll-sass-converter.svg?branch=master)](https://travis-ci.org/jekyll/jekyll-sass-converter)
+[![Windows Build status](https://img.shields.io/appveyor/ci/jekyll/jekyll-sass-converter/master.svg?label=Windows%20build)][appveyor]
 
 ## Installation
 
