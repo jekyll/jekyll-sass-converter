@@ -9,8 +9,6 @@ branches:
 build: off
 
 install:
-  - gem update --system
-  - gem install bundler --version 1.16.2
   - SET PATH=C:\Ruby%RUBY_FOLDER_VER%\bin;%PATH%
   - bundle install --retry 5 --jobs=%NUMBER_OF_PROCESSORS% --clean --path vendor\bundle
 
