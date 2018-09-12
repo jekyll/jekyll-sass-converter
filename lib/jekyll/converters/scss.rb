@@ -120,6 +120,7 @@ module Jekyll
 
       def convert(content)
         output = ::SassC::Engine.new(content.dup, sass_configs).render
+        puts "SassC being used" # FIXME: remove this, once the changes are implemented.
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::SassC::SyntaxError => e
