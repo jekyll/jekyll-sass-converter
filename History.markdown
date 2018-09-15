@@ -1,5 +1,8 @@
 ## HEAD
 
+ * Replace deprecated ruby-sass by sassc-ruby (#74)
+
+
 ### Minor Enhancements
 
   * Target Ruby 2.3 (#70)

@@ -78,7 +78,9 @@ module Jekyll
       end
 
       def sass_load_paths
-        paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
+        paths = user_sass_load_paths +
+          [sass_dir_relative_to_site_source] +
+          Array(::Sass.load_paths)
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
@@ -120,7 +122,6 @@ module Jekyll
 
       def convert(content)
         output = ::SassC::Engine.new(content.dup, sass_configs).render
-        puts "SassC being used" # FIXME: remove this, once the changes are implemented.
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::SassC::SyntaxError => e
