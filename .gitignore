@@ -5,6 +5,3 @@ Gemfile.lock
 pkg
 rdoc
 spec/dest
-.idea/
-.ruby-gemset
-.ruby-version
