@@ -9,10 +9,39 @@ module Jekyll
       BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
       SyntaxError = Class.new(ArgumentError)
 
+      ##
+      # This hook is triggered just before the method
+      # {#convert(content)} is executed, it associates
+      # the Scss (and Sass) converters with their
+      # respective page objects.
+      Jekyll::Hooks.register :pages, :pre_render do |page|
+        if page.respond_to? :converters
+          page.converters.each do |converter|
+            converter.associate_page(page) if converter.is_a?(Scss)
+          end
+        end
+      end
+
       safe true
       priority :low
 
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
+
+      ##
+      # Associate this Converter with the "page" object which manages
+      # input and output files for this converter.
+      #
+      # Note: changing the associated page object during the live time of
+      # a Converter Object will result in inconsistent results.
+      #
+      # @param [Jekyll:Page] page the page-object for which this object acts as converter.
+      def associate_page(page)
+        @page ||= page
+        unless @page.equal?(page)
+          raise Errors::FatalException,
+                "Program error; attempt to use the same converter for several pages."
+        end
+      end
 
       def matches(ext)
         ext =~ %r!^\.scss$!i
@@ -77,7 +106,7 @@ module Jekyll
         Jekyll.sanitized_path(site_source, sass_dir)
       end
 
-      def sass_load_paths
+      def sass_load_paths # rubocop:disable Metrics/AbcSize
         paths = user_sass_load_paths +
           [sass_dir_relative_to_site_source] +
           Array(::Sass.load_paths)
