@@ -76,6 +76,7 @@ module Jekyll
 
       def sass_load_paths
         paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
+        paths << site.theme.sass_path if site.theme && site.theme.sass_path
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
@@ -124,6 +125,11 @@ module Jekyll
       end
 
       private
+
+      def site
+        @site ||= Jekyll.sites.first
+      end
+
       def site_source
         @site_source ||= File.expand_path(@config["source"]).freeze
       end
