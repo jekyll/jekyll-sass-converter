@@ -34,7 +34,9 @@ SCSS
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Scss.new(site_configuration({ "sass" => overrides }))
+    scss_converter_instance(site).dup.tap do |obj|
+      obj.instance_variable_get(:@config)["sass"] = overrides
+    end
   end
 
   context "matching file extensions" do
@@ -115,7 +117,7 @@ SCSS
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(compressed(css_output))
+      expect(converter.convert(content)).to eql(css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
