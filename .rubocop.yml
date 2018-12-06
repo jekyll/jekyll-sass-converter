@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 require: rubocop-jekyll
 
 inherit_gem:
@@ -5,7 +7,3 @@ inherit_gem:
 
 AllCops:
   TargetRubyVersion: 2.3
-
-Metrics/LineLength:
-  Exclude:
-    - jekyll-sass-converter.gemspec
