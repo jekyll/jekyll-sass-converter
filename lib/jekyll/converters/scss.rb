@@ -6,7 +6,7 @@ require "jekyll/utils"
 module Jekyll
   module Converters
     class Scss < Converter
-      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!
+      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -58,6 +58,7 @@ module Jekyll
 
       def sass_dir
         return "_sass" if jekyll_sass_configuration["sass_dir"].to_s.empty?
+
         jekyll_sass_configuration["sass_dir"]
       end
 
@@ -108,11 +109,11 @@ module Jekyll
       end
 
       def sass_configs
-        sass_build_configuration_options({
+        sass_build_configuration_options(
           "syntax"     => syntax,
           "cache"      => allow_caching?,
-          "load_paths" => sass_load_paths,
-        })
+          "load_paths" => sass_load_paths
+        )
       end
 
       def convert(content)
@@ -124,6 +125,7 @@ module Jekyll
       end
 
       private
+
       def site_source
         @site_source ||= File.expand_path(@config["source"]).freeze
       end
