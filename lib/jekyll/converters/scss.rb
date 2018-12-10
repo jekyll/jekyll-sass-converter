@@ -7,6 +7,8 @@ module Jekyll
   module Converters
     class Scss < Converter
       BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
+      EXTENSION_PATTERN = %r!^\.scss$!i.freeze
+
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -15,7 +17,7 @@ module Jekyll
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       def matches(ext)
-        ext =~ %r!^\.scss$!i
+        ext =~ self.class::EXTENSION_PATTERN
       end
 
       def output_ext(_ext)
