@@ -9,6 +9,10 @@
   * Add appveyor.yml (#76)
   * Lint with rubocop-jekyll (#73)
 
+### Major Enhancements
+
+  * Migrate to sassc gem (#75)
+
 ## 1.5.2 / 2017-02-03
 
 ### Development Fixes
