@@ -3,6 +3,7 @@
 ### Minor Enhancements
 
   * Target Ruby 2.3 (#70)
+  * Memoize #jekyll_sass_configuration (#82)
 
 ### Development Fixes
 
