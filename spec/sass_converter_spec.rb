@@ -50,7 +50,7 @@ describe(Jekyll::Converters::Sass) do
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = "Invalid CSS after \"$font-stack\": expected expression (e.g. 1px, bold), was \";\" on line 1"
+      error_message = %r!\AError: Invalid CSS after "f": expected 1 selector or at-rule. was "font-family: \$font-"\s+on line 1 of stdin!
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
