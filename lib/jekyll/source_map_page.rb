@@ -15,7 +15,7 @@ module Jekyll
 
       process(@name)
       Jekyll::Hooks.trigger :pages, :post_init, self
-   end
+    end
 
     def source_map(map)
       self.output = map
