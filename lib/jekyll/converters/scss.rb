@@ -89,7 +89,7 @@ module Jekyll
 
       def source_map_page
         return if associate_page_failed?
-        
+
         @source_map_page ||= SourceMapPage.new(sass_page)
       end
 
@@ -193,7 +193,7 @@ module Jekyll
       #   "stdin" if #associate_page failed
       def filename
         return "stdin" if associate_page_failed?
-        
+
         sass_page.name
       end
 
@@ -204,7 +204,7 @@ module Jekyll
       #   "stdin.css" if #associate_page failed
       def output_path
         return "stdin.css" if associate_page_failed?
-        
+
         sass_page.basename + ".css"
       end
 
@@ -215,7 +215,7 @@ module Jekyll
       #   "" if #associate_page failed
       def source_map_file
         return "" if associate_page_failed?
-        
+
         sass_page.basename + ".css.map"
       end
 
@@ -246,7 +246,7 @@ module Jekyll
 
       def generate_source_map(engine)
         return if associate_page_failed?
-        
+
         source_map_page.source_map(engine.source_map)
         site.pages << source_map_page
       rescue ::SassC::NotRenderedError => e
