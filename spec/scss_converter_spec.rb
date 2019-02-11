@@ -108,9 +108,8 @@ describe(Jekyll::Converters::Scss) do
         expect(verter.sass_configs[:style]).to eql(:compact)
       end
 
-      it "only contains :syntax, :cache, :style, and :load_paths keys" do
-        skip("what is the reason to limit the possible options to those listed here?")
-        expect(verter.sass_configs.keys).to eql([:load_paths, :syntax, :style, :cache])
+      it "at least contains :syntax and :load_paths keys" do
+        expect(verter.sass_configs.keys).to include(:load_paths, :syntax)
       end
     end
   end
