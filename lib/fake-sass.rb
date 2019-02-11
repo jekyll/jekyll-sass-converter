@@ -31,10 +31,6 @@ module Sass
   #   Sass.load_paths << File.dirname(__FILE__ + '/sass')
   # @return [Array<String, Pathname, Sass::Importers::Base>]
   def self.load_paths
-    @load_paths ||= if ENV["SASS_PATH"]
-                      ENV["SASS_PATH"].split(File::PATH_SEPARATOR)
-                    else
-                      []
-                    end
+    @load_paths ||= ENV["SASS_PATH"].to_s.split(File::PATH_SEPARATOR)
   end
 end
