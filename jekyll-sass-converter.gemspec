@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "sassc", "~> 2.0"
 
-  spec.add_development_dependency "bundler", "~> 1.15"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "jekyll", "~> 3.0"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
