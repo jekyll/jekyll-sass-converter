@@ -151,7 +151,8 @@ module Jekyll
         Jekyll.sanitized_path(site_source, sass_dir)
       end
 
-      def sass_load_paths # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/AbcSize
+      def sass_load_paths
         paths = user_sass_load_paths +
           [sass_dir_relative_to_site_source] +
           Array(::Sass.load_paths)
