@@ -14,10 +14,8 @@ module Jekyll
       priority :low
 
       ##
-      # This hook is triggered just before the method
-      # {#convert(content)} is executed, it associates
-      # the Scss (and Sass) converters with their
-      # respective sass_page objects.
+      # This hook is triggered just before the method {#convert(content)} is executed, it associates
+      # the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :pre_render do |page|
         if page.respond_to? :converters
           page.converters.each do |converter|
@@ -27,10 +25,8 @@ module Jekyll
       end
 
       ##
-      # This hook is triggered just after the method
-      # {#convert(content)} is executed, it dissociates
-      # the Scss (and Sass) converters with their
-      # respective sass_page objects.
+      # This hook is triggered just after the method {#convert(content)} has been executed, it
+      # dissociates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :post_render do |page|
         if page.respond_to? :converters
           page.converters.each do |converter|
@@ -42,8 +38,8 @@ module Jekyll
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       ##
-      # Associate this Converter with the "page" object that manages
-      # input and output files for this converter.
+      # Associate this Converter with the "page" object that manages input and output files for
+      # this converter.
       #
       # Note: changing the associated sass_page-object during the live time of
       # this Converter-object may result in inconsistent results.
@@ -79,8 +75,8 @@ module Jekyll
         !sass_page
       end
 
-      # @attr_reader [Jekyll:Page] sass_page the Page-object for which this
-      # object acts as a converter.
+      # @attr_reader [Jekyll:Page] sass_page the Page-object for which this object acts as a
+      # converter.
       attr_reader :sass_page
 
       def site
@@ -188,30 +184,25 @@ module Jekyll
         !!jekyll_sass_configuration["add_charset"]
       end
 
-      # The name of the input scss (or sass) file.
-      # This information will be used for error reporting
+      # The name of the input scss (or sass) file.This information will be used for error reporting
       # and will written into the source map file as main source.
-      # @return [String] the name of the input file or
-      #   "stdin" if #associate_page failed
+      # # @return [String] the name of the input file or "stdin" if #associate_page failed
       def filename
         return "stdin" if associate_page_failed?
 
         sass_page.name
       end
 
-      # The name of the generated css file.
-      # This information will be written into the
-      # source map file as a backward reference to the input
-      # @return [String] the name of the css file or
-      #   "stdin.css" if #associate_page failed
+      # The name of the generated css file. This information will be written into the source map
+      # file as a backward reference to the input.
+      # @return [String] the name of the css file or "stdin.css" if #associate_page failed
       def output_path
         return "stdin.css" if associate_page_failed?
 
         sass_page.basename + ".css"
       end
 
-      # The name of the generated source map file.
-      # This information will be written into the
+      # The name of the generated source map file. This information will be written into the
       # css file to reference to the source map.
       # @return [String] the name of the css file or
       #   "" if #associate_page failed
