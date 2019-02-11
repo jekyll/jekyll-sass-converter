@@ -13,9 +13,8 @@ module Jekyll
       safe true
       priority :low
 
-      ##
-      # This hook is triggered just before the method {#convert(content)} is executed, it associates
-      # the Scss (and Sass) converters with their respective sass_page objects.
+      # This hook is triggered just before the method {#convert(content)} is executed, it
+      # associates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :pre_render do |page|
         if page.respond_to? :converters
           page.converters.each do |converter|
@@ -24,7 +23,6 @@ module Jekyll
         end
       end
 
-      ##
       # This hook is triggered just after the method {#convert(content)} has been executed, it
       # dissociates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :post_render do |page|
@@ -37,7 +35,6 @@ module Jekyll
 
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
-      ##
       # Associate this Converter with the "page" object that manages input and output files for
       # this converter.
       #
@@ -55,7 +52,6 @@ module Jekyll
         @sass_page = page
       end
 
-      ##
       # Dissociate this Converter with the "page" object.
       #
       # @param [Jekyll:Page] page the sass_page-object
