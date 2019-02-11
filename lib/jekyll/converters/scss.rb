@@ -178,6 +178,7 @@ module Jekyll
 
         paths.select { |path| File.directory?(path) }
       end
+      # rubocop:enable Metrics/AbcSize
 
       def allow_caching?
         !safe?
