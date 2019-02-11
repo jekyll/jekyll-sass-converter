@@ -47,8 +47,8 @@ module Jekyll
       # @param [Jekyll:Page] page the sass_page-object for which this object acts as converter.
       def associate_page(page)
         if @sass_page
-          Jekyll.logger.warn("Sass-converter",
-                             "sass_page re-assigned: #{@sass_page.name} to #{page.name}")
+          Jekyll.logger.warn "Sass Converter:",
+                             "sass_page re-assigned: #{@sass_page.name} to #{page.name}"
           dissociate_page(page)
           return
         end
@@ -62,8 +62,8 @@ module Jekyll
       #                      for which this object has acted as a converter.
       def dissociate_page(page)
         unless page.equal?(@sass_page)
-          Jekyll.logger.warn("Sass-converter",
-                             "dissociating a page that was never associated #{page.name}")
+          Jekyll.logger.warn "Sass Converter:",
+                             "dissociating a page that was never associated #{page.name}"
         end
 
         @source_map_page = nil
@@ -243,7 +243,7 @@ module Jekyll
         source_map_page.source_map(engine.source_map)
         site.pages << source_map_page
       rescue ::SassC::NotRenderedError => e
-        Jekyll.logger.warn("could not generate source map #{e.message} => #{e.cause}")
+        Jekyll.logger.warn "Could not generate source map #{e.message} => #{e.cause}"
       end
 
       private
