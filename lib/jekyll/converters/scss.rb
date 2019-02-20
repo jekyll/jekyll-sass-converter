@@ -34,10 +34,10 @@ module Jekyll
       # Associate this Converter with the "page" object that manages input and output files for
       # this converter.
       #
-      # Note: changing the associated sass_page-object during the live time of
-      # this Converter-object may result in inconsistent results.
+      # Note: changing the associated sass_page during the live time of this Converter instance
+      # may result in inconsistent results.
       #
-      # @param [Jekyll:Page] page the sass_page-object for which this object acts as converter.
+      # @param [Jekyll:Page] page The sass_page for which this object acts as converter.
       def associate_page(page)
         if @sass_page
           Jekyll.logger.debug "Sass Converter:",
@@ -50,8 +50,7 @@ module Jekyll
 
       # Dissociate this Converter with the "page" object.
       #
-      # @param [Jekyll:Page] page the sass_page-object
-      #                      for which this object has acted as a converter.
+      # @param [Jekyll:Page] page The sass_page for which this object has acted as a converter.
       def dissociate_page(page)
         unless page.equal?(@sass_page)
           Jekyll.logger.debug "Sass Converter:",

@@ -10,22 +10,19 @@
 # by faking this functionality...
 #
 # Please note that this module should never be installed __together__ with ruby-sass.
-#
-#
 module Sass
-  # The global load paths for Sass files. This is meant for plugins and
-  # libraries to register the paths to their Sass stylesheets to that they may
-  # be `@imported`. This load path is used by every instance of {Sass::Engine}.
+  # The global load paths for Sass files. This is meant for plugins and libraries to register
+  # the paths to their Sass stylesheets to that they may be `@imported`. This load path is used
+  # by every instance of {Sass::Engine}.
   # They are lower-precedence than any load paths passed in via the
   # {file:SASS_REFERENCE.md#load_paths-option `:load_paths` option}.
   #
-  # If the `SASS_PATH` environment variable is set,
-  # the initial value of `load_paths` will be initialized based on that.
-  # The variable should be a colon-separated list of path names
+  # If the `SASS_PATH` environment variable is set, the initial value of `load_paths` will be
+  # initialized based on that. The variable should be a colon-separated list of path names
   # (semicolon-separated on Windows).
   #
-  # Note that files on the global load path are never compiled to CSS
-  # themselves, even if they aren't partials. They exist only to be imported.
+  # Note that files on the global load path are never compiled to CSS themselves, even if they
+  # aren't partials. They exist only to be imported.
   #
   # @example
   #   Sass.load_paths << File.dirname(__FILE__ + '/sass')
