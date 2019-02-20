@@ -63,24 +63,6 @@ module Jekyll
         @site = nil
       end
 
-      def associate_page_failed?
-        !sass_page
-      end
-
-      # @attr_reader [Jekyll:Page] sass_page the Page-object for which this object acts as a
-      # converter.
-      attr_reader :sass_page
-
-      def site
-        sass_page.site unless associate_page_failed?
-      end
-
-      def source_map_page
-        return if associate_page_failed?
-
-        @source_map_page ||= SourceMapPage.new(sass_page)
-      end
-
       def matches(ext)
         ext =~ %r!^\.scss$!i
       end
@@ -176,34 +158,6 @@ module Jekyll
         !!jekyll_sass_configuration["add_charset"]
       end
 
-      # The name of the input scss (or sass) file.This information will be used for error reporting
-      # and will written into the source map file as main source.
-      # # @return [String] the name of the input file or "stdin" if #associate_page failed
-      def filename
-        return "stdin" if associate_page_failed?
-
-        sass_page.name
-      end
-
-      # The name of the generated css file. This information will be written into the source map
-      # file as a backward reference to the input.
-      # @return [String] the name of the css file or "stdin.css" if #associate_page failed
-      def output_path
-        return "stdin.css" if associate_page_failed?
-
-        sass_page.basename + ".css"
-      end
-
-      # The name of the generated source map file. This information will be written into the
-      # css file to reference to the source map.
-      # @return [String] the name of the css file or
-      #   "" if #associate_page failed
-      def source_map_file
-        return "" if associate_page_failed?
-
-        sass_page.basename + ".css.map"
-      end
-
       def sass_configs
         sass_build_configuration_options(
           :style               => sass_style,
@@ -229,6 +183,51 @@ module Jekyll
         raise SyntaxError, "#{e} on line #{line}"
       end
 
+      private
+
+      # The Page instance for which this object acts as a converter.
+      attr_reader :sass_page
+
+      def associate_page_failed?
+        !sass_page
+      end
+
+      # The name of the input scss (or sass) file. This information will be used for error
+      # reporting and will written into the source map file as main source.
+      #
+      # Returns the name of the input file or "stdin" if #associate_page failed
+      def filename
+        return "stdin" if associate_page_failed?
+
+        sass_page.name
+      end
+
+      # The name of the generated css file. This information will be written into the source map
+      # file as a backward reference to the input.
+      #
+      # Returns the name of the css file or "stdin.css" if #associate_page failed
+      def output_path
+        return "stdin.css" if associate_page_failed?
+
+        sass_page.basename + ".css"
+      end
+
+      # The name of the generated source map file. This information will be written into the
+      # css file to reference to the source map.
+      #
+      # Returns the name of the css file or "" if #associate_page failed
+      def source_map_file
+        return "" if associate_page_failed?
+
+        sass_page.basename + ".css.map"
+      end
+
+      def source_map_page
+        return if associate_page_failed?
+
+        @source_map_page ||= SourceMapPage.new(sass_page)
+      end
+
       def generate_source_map(engine)
         return if associate_page_failed?
 
@@ -238,7 +237,9 @@ module Jekyll
         Jekyll.logger.warn "Could not generate source map #{e.message} => #{e.cause}"
       end
 
-      private
+      def site
+        sass_page.site unless associate_page_failed?
+      end
 
       def site_source
         @site_source ||= File.expand_path(@config["source"]).freeze
