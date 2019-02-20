@@ -17,7 +17,7 @@ module Jekyll
       # associates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :pre_render do |page|
         page.converters.each do |converter|
-          converter.associate_page(page) if converter.is_a?(Scss)
+          converter.associate_page(page) if converter.is_a?(Jekyll::Converters::Scss)
         end
       end
 
@@ -25,7 +25,7 @@ module Jekyll
       # dissociates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :post_render do |page|
         page.converters.each do |converter|
-          converter.dissociate_page(page) if converter.is_a?(Scss)
+          converter.dissociate_page(page) if converter.is_a?(Jekyll::Converters::Scss)
         end
       end
 
