@@ -40,8 +40,8 @@ module Jekyll
       # @param [Jekyll:Page] page the sass_page-object for which this object acts as converter.
       def associate_page(page)
         if @sass_page
-          Jekyll.logger.warn "Sass Converter:",
-                             "sass_page re-assigned: #{@sass_page.name} to #{page.name}"
+          Jekyll.logger.debug "Sass Converter:",
+                              "sass_page re-assigned: #{@sass_page.name} to #{page.name}"
           dissociate_page(page)
           return
         end
@@ -54,8 +54,8 @@ module Jekyll
       #                      for which this object has acted as a converter.
       def dissociate_page(page)
         unless page.equal?(@sass_page)
-          Jekyll.logger.warn "Sass Converter:",
-                             "dissociating a page that was never associated #{page.name}"
+          Jekyll.logger.debug "Sass Converter:",
+                              "dissociating a page that was never associated #{page.name}"
         end
 
         @source_map_page = nil
