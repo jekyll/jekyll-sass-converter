@@ -31,7 +31,7 @@ module Jekyll
 
     # @return[String] the object as a debug String.
     def inspect
-      "#<Jekyll:SourceMapPage @name=#{name.inspect}>"
+      "#<#{self.class} @name=#{name.inspect}>"
     end
   end
 end
