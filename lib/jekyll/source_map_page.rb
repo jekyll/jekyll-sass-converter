@@ -10,6 +10,7 @@ module Jekyll
     def initialize(css_page)
       @site = css_page.site
       @dir  = css_page.dir
+      @data = css_page.data
       @name = css_page.basename + ".css.map"
 
       process(@name)
