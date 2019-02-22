@@ -29,55 +29,28 @@ Jekyll Sass Converter comes bundled with Jekyll 2.0.0 and greater. For more
 information about usage, visit the [Jekyll Assets Documentation
 page](http://jekyllrb.com/docs/assets/).
 
-Starting with this version, the Converter will by default generate a _source map_ file
-along with the `.css` output file. The _source map_ is useful when we use the
-web developers tools of 
-[Chrome](https://developers.google.com/web/tools/chrome-devtools/)
-or 
-[Firefox](https://developer.mozilla.org/en-US/docs/Tools) 
-to debug our `.sass` or `.scss` style sheets.
-The _source map_ is a file that maps from the output `.css` file to the 
-original source `.sass` or `.scss` style sheets.
-Thus enabling the browser to reconstruct the original source 
+### Source Maps
+
+Starting with `v2.0`, the Converter will by default generate a _source map_ file along with
+the `.css` output file. The _source map_ is useful when we use the web developers tools of
+[Chrome](https://developers.google.com/web/tools/chrome-devtools/) or
+[Firefox](https://developer.mozilla.org/en-US/docs/Tools) to debug our `.sass` or `.scss`
+stylesheets.
+
+The _source map_ is a file that maps from the output `.css` file to the original source
+`.sass` or `.scss` style sheets. Thus enabling the browser to reconstruct the original source
 and present the reconstructed original in the debugger.
 
-Here is some additional information to the above mentioned _Jekyll Assets Documentation page_:
+Source map generation cannot be disabled as of now. However, there is one configuration option
+associated with source maps and this converter:
 
-1. ...For instance, if you have a file named `css/styles.scss` in 
-   your site’s source folder, Jekyll will process it and put it 
-   in your site’s destination folder under `css/styles.css` __and `css/styles.css.map`__.
+  * **`line_comments`**
 
-2. ...Jekyll allows you to customize your Sass conversion in certain ways...  
+    When set to _true_, the line number and filename of the source is included in the compiled
+    CSS-file. Useful for debugging when the _source-map_ is not available, but might
+    considerably increase the size of the generated CSS files.
 
-   There are a number of options which are communicated to the underlying `sassc` library. 
-   You can specify these in your `_config.yml` file in the following way:
-   ```yml
-   sass:
-       <option_name1>: <option_value1>
-       <option_name2>: <option_value2>
-   ```
-
-   Available options are:
-   
-   * **`style`**
-     Sets the style of the CSS-output.
-     Can be `nested`, `compact`, `compressed`, or `expanded`.
-     See the [SASS_REFERENCE](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style)
-     for details.  
-     
-     Defaults to `compact`.
-     
-   * **`sass_dir`**
-     An array of filesystem-paths which should be searched for Sass-partials.
-     
-     Defaults to `_sass`.    
-         
-   * **`line_comments`**
-     When set to _true_ causes the line number and filename of the source to be emitted into the 
-     compiled CSS-file. Useful for debugging when the _source-map_ is not available, but might 
-     considerably increase the size of the generated CSS files. 
-     
-     Defaults to `false`.
+    Defaults to `false`.
 
 ## Contributing
 
