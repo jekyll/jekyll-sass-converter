@@ -70,21 +70,14 @@ Here is some additional information to the above mentioned _Jekyll Assets Docume
    * **`sass_dir`**
      An array of filesystem-paths which should be searched for Sass-partials.
      
-     Defaults to `_sass`.     
-     
-   * **`precision`**
-     Sets the precision factor used in numeric output.
-   
-   * **`source_map_contents`**
-     When set to _true_ the full source text will be included in the _source-map_.
-     Useful for debugging in situations where the server cannot access the original source files
-     (which is usually the case for Jekyll sites).
-     
-     Defaults to `true`.        
+     Defaults to `_sass`.    
          
    * **`line_comments`**
-     When set to _true_ causes the line number and filename of the source be emitted into the compiled CSS-file. 
-     Useful for debugging when the _source-map_ is not available. 
+     When set to _true_ causes the line number and filename of the source be emitted into the 
+     compiled CSS-file. Useful for debugging when the _source-map_ is not available, but might 
+     considerably increase the size of the generated CSS files. 
+     
+     Defaults to `false`.
 
 ## Contributing
 

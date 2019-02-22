@@ -165,7 +165,8 @@ module Jekyll
           :output_path         => output_path,
           :source_map_file     => source_map_file,
           :load_paths          => sass_load_paths,
-          :source_map_contents => true
+          :source_map_contents => true,
+          :line_comments       => line_comments
         )
       end
 
@@ -199,6 +200,15 @@ module Jekyll
         return "stdin" if associate_page_failed?
 
         sass_page.name
+      end
+
+      # The value of the `line_comments` option.
+      # When set to `true` causes the line number and filename of the source be emitted into the
+      # compiled CSS-file. Useful for debugging when the source-map is not available.
+      #
+      # Returns the value of the `line_comments`-option chosen by the user or 'false' by default.
+      def line_comments
+        jekyll_sass_configuration.fetch("line_comments", false)
       end
 
       # The name of the generated css file. This information will be written into the source map
