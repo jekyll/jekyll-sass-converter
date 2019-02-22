@@ -73,7 +73,7 @@ Here is some additional information to the above mentioned _Jekyll Assets Docume
      Defaults to `_sass`.    
          
    * **`line_comments`**
-     When set to _true_ causes the line number and filename of the source be emitted into the 
+     When set to _true_ causes the line number and filename of the source to be emitted into the 
      compiled CSS-file. Useful for debugging when the _source-map_ is not available, but might 
      considerably increase the size of the generated CSS files. 
      
