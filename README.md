@@ -45,51 +45,49 @@ and present the reconstructed original in the debugger.
 
 Configuration options are specified in the `_config.yml` file in the following way:
 
-   ```yml
-   sass:
-       <option_name1>: <option_value1>
-       <option_name2>: <option_value2>
-   ```
+  ```yml
+  sass:
+    <option_name1>: <option_value1>
+    <option_name2>: <option_value2>
+  ```
 
 Available options are:
 
-   * **`style`**
-     Sets the style of the CSS-output.
-     Can be `nested`, `compact`, `compressed`, or `expanded`.
-     See the [SASS_REFERENCE](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style)
-     for details.  
-     
-     Defaults to `compact`.
-     
-   * **`sass_dir`**
-     An array of filesystem-paths which should be searched for Sass-partials.
-     
-     Defaults to `_sass`
+  * **`style`**
+
+    Sets the style of the CSS-output.
+    Can be `nested`, `compact`, `compressed`, or `expanded`.
+    See the [SASS_REFERENCE](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style)
+    for details.
+
+    Defaults to `compact`.
+
+  * **`sass_dir`**
+
+    An array of filesystem-paths which should be searched for Sass partials.
+
+    Defaults to `_sass`
 
   * **`line_comments`**
 
     When set to _true_, the line number and filename of the source is included in the compiled
-    CSS-file. Useful for debugging when the _source-map_ is not available, but might
+    CSS-file. Useful for debugging when the _source map_ is not available, but might
     considerably increase the size of the generated CSS files.
 
     Defaults to `false`.
-    
-  * **`sourcemap`**
-  
-    Controls when sourcemaps shall be generated. 
-    
-    - `never` causes no sourcemaps to be generated at all.
-    - `always` sourcemaps will always be generated.
-    - `development` sourcemaps will only be generated if
-       the site is in development environment. That is, the variable JEKYLL_ENV is set
-       to `development`. More about Environments 
-       [here](https://jekyllrb.com/docs/configuration/environments/).
-       
-    Defaults to `always`.
-     
-     
 
-  
+  * **`sourcemap`**
+
+    Controls when source maps shall be generated.
+
+    - `never` &mdash; causes no source maps to be generated at all.
+    - `always` &mdash; source maps will always be generated.
+    - `development` &mdash; source maps will only be generated if the site is in development
+      [environment](https://jekyllrb.com/docs/configuration/environments/).
+      That is, when the environment variable `JEKYLL_ENV` is set to `development`.
+
+    Defaults to `always`.
+
 
 ## Contributing
 
