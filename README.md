@@ -41,8 +41,30 @@ The _source map_ is a file that maps from the output `.css` file to the original
 `.sass` or `.scss` style sheets. Thus enabling the browser to reconstruct the original source
 and present the reconstructed original in the debugger.
 
-Source map generation cannot be disabled as of now. However, there is one configuration option
-associated with source maps and this converter:
+### Configuration Options
+
+Configuration options are specified in the `_config.yml` file in the following way:
+
+   ```yml
+   sass:
+       <option_name1>: <option_value1>
+       <option_name2>: <option_value2>
+   ```
+
+Available options are:
+
+   * **`style`**
+     Sets the style of the CSS-output.
+     Can be `nested`, `compact`, `compressed`, or `expanded`.
+     See the [SASS_REFERENCE](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style)
+     for details.  
+     
+     Defaults to `compact`.
+     
+   * **`sass_dir`**
+     An array of filesystem-paths which should be searched for Sass-partials.
+     
+     Defaults to `_sass`
 
   * **`line_comments`**
 
@@ -51,6 +73,23 @@ associated with source maps and this converter:
     considerably increase the size of the generated CSS files.
 
     Defaults to `false`.
+    
+  * **`sourcemap`**
+  
+    Controls when sourcemaps shall be generated. 
+    
+    - `never` causes no sourcemaps to be generated at all.
+    - `always` sourcemaps will always be generated.
+    - `development` sourcemaps will only be generated if
+       the site is in development environment. That is, the variable JEKYLL_ENV is set
+       to `development`. More about Environments 
+       [here](https://jekyllrb.com/docs/configuration/environments/).
+       
+    Defaults to `always`.
+     
+     
+
+  
 
 ## Contributing
 

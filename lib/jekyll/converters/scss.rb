@@ -159,23 +159,23 @@ module Jekyll
 
       def sass_configs
         sass_build_configuration_options(
-          :style               => sass_style,
-          :syntax              => syntax,
-          :filename            => filename,
-          :output_path         => output_path,
-          :source_map_file     => source_map_file,
-          :load_paths          => sass_load_paths,
-          :source_map_contents => true,
-          :line_comments       => line_comments
+          :style                => sass_style,
+          :syntax               => syntax,
+          :filename             => filename,
+          :output_path          => output_path,
+          :source_map_file      => source_map_file,
+          :load_paths           => sass_load_paths,
+          :omit_source_map_url  => !sourcemap_required?,
+          :source_map_contents  => true,
+          :line_comments_option => line_comments_option
         )
       end
 
       def convert(content)
         config = sass_configs
-        config[:omit_source_map_url] = true if associate_page_failed?
         engine = ::SassC::Engine.new(content.dup, config)
         output = engine.render
-        generate_source_map(engine)
+        generate_source_map(engine) if sourcemap_required?
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue ::SassC::SyntaxError => e
@@ -207,8 +207,32 @@ module Jekyll
       # compiled CSS-file. Useful for debugging when the source-map is not available.
       #
       # Returns the value of the `line_comments`-option chosen by the user or 'false' by default.
-      def line_comments
+      def line_comments_option
         jekyll_sass_configuration.fetch("line_comments", false)
+      end
+
+      # The value of the `sourcemap` option chosen by the user.
+      #
+      # This option controls when sourcemaps shall be generated or not.
+      #
+      # Returns the value of the `sourcemap`-option chosen by the user or ':always' by default.
+      def sourcemap_option
+        jekyll_sass_configuration.fetch("sourcemap", :always).to_sym
+      end
+
+      # Determines whether a sourcemap shall be generated or not.
+      #
+      # Returns `true` if a sourcemap shall be generated, `false` otherwise.
+      def sourcemap_required?
+        return false if associate_page_failed?
+
+        return false if sourcemap_option == :never
+
+        return true if sourcemap_option == :always
+
+        return false if (sourcemap_option == :development) && (Jekyll.env != "development")
+
+        true
       end
 
       # The name of the generated css file. This information will be written into the source map
@@ -237,6 +261,9 @@ module Jekyll
         @source_map_page ||= SourceMapPage.new(sass_page)
       end
 
+      # Reads the source-map from the engine and adds it to the source-map-page.
+      #
+      # @param [::SassC::Engine] engine The sass Compiler engine.
       def generate_source_map(engine)
         return if associate_page_failed?
 
