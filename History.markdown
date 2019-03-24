@@ -9,6 +9,7 @@
 
   * Add appveyor.yml (#76)
   * Lint with rubocop-jekyll (#73)
+  * Cache stateless regexes in class constants (#83)
 
 ### Major Enhancements
 
