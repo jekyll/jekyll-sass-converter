@@ -224,15 +224,10 @@ module Jekyll
       #
       # Returns `true` if a sourcemap shall be generated, `false` otherwise.
       def sourcemap_required?
-        return false if associate_page_failed?
+        return false if associate_page_failed? || sourcemap_option == :never
+        return true  if sourcemap_option == :always
 
-        return false if sourcemap_option == :never
-
-        return true if sourcemap_option == :always
-
-        return false if (sourcemap_option == :development) && (Jekyll.env != "development")
-
-        true
+        !(sourcemap_option == :development && Jekyll.env != "development")
       end
 
       # The name of the generated css file. This information will be written into the source map
