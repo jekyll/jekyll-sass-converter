@@ -1,0 +1,6 @@
+#! /bin/bash
+# Tag and push a release.
+
+set -e
+script/cibuild
+bundle exec rake release

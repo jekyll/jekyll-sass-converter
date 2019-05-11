@@ -1,35 +1,37 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 describe(Jekyll::Converters::Sass) do
   let(:site) do
     Jekyll::Site.new(site_configuration)
   end
   let(:content) do
-    <<-SASS
-// tl;dr some sass
-$font-stack: Helvetica, sans-serif
-body
-  font-family: $font-stack
-  font-color: fuschia
-SASS
+    <<~SASS
+      // tl;dr some sass
+      $font-stack: Helvetica, sans-serif
+      body
+        font-family: $font-stack
+        font-color: fuschia
+    SASS
   end
   let(:css_output) do
-    <<-CSS
-body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
-CSS
+    <<~CSS
+      body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
+    CSS
   end
   let(:invalid_content) do
-    <<-SASS
-font-family: $font-stack;
-SASS
+    <<~SASS
+      font-family: $font-stack;
+    SASS
   end
 
   def compressed(content)
-    content.gsub(/\s+/, '').gsub(/;}/, '}') + "\n"
+    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Sass.new(site_configuration({"sass" => overrides}))
+    Jekyll::Converters::Sass.new(site_configuration("sass" => overrides))
   end
 
   context "matching file extensions" do
@@ -48,20 +50,20 @@ SASS
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = "Invalid CSS after \"$font-stack\": expected expression (e.g. 1px, bold), was \";\" on line 1"
-      expect {
+      error_message = %r!\AError: Invalid CSS after "f": expected 1 selector or at-rule. was "font-family: \$font-"\s+on line 1 of stdin!
+      expect do
         converter.convert(invalid_content)
-      }.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
 
     it "removes byte order mark from compressed Sass" do
-      result = converter({ "style" => :compressed }).convert("a\n  content: \"\uF015\"")
+      result = converter("style" => :compressed).convert("a\n  content: \"\uF015\"")
       expect(result).to eql("a{content:\"\uF015\"}\n")
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
 
     it "does not include the charset if asked not to" do
-      result = converter({ "style" => :compressed, "add_charset" => true }).convert("a\n  content: \"\uF015\"")
+      result = converter("style" => :compressed, "add_charset" => true).convert("a\n  content: \"\uF015\"")
       expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end

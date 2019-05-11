@@ -1,3 +1,40 @@
+## HEAD
+
+### Minor Enhancements
+
+  * Target Ruby 2.3 (#70)
+  * Memoize #jekyll_sass_configuration (#82)
+  * SyntaxError line and filename are set by SassC (#85)
+
+### Development Fixes
+
+  * Add appveyor.yml (#76)
+  * Lint with rubocop-jekyll (#73)
+  * Cache stateless regexes in class constants (#83)
+
+### Major Enhancements
+
+  * Migrate to sassc gem (#75)
+
+## 1.5.2 / 2017-02-03
+
+### Development Fixes
+
+  * Test against Ruby 2.5 (#68)
+
+## 1.5.1 / 2017-12-02
+
+### Minor
+
+  * Security: Bump Rubocop to 0.51
+
+### Development Fixes
+
+  * Drop support for Jekyll 2.x and Ruby 2.0 (#62)
+  * Inherit Jekyll&#39;s rubocop config for consistency (#61)
+  * Define path with __dir__ (#60)
+  * Fix script/release
+
 ## 1.5.0 / 2016-11-14
 
   * Allow `load_paths` in safe mode with sanitization (#50)
