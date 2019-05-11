@@ -121,12 +121,11 @@ module Jekyll
       end
 
       def convert(content)
-        output = ::SassC::Engine.new(content.dup, sass_configs).render
+        output = SassC::Engine.new(content.dup, sass_configs).render
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
-      rescue ::SassC::SyntaxError => e
-        line = e.instance_variable_get(:@line)
-        raise SyntaxError, "#{e} on line #{line}"
+      rescue SassC::SyntaxError => exception
+        raise SyntaxError, exception.to_s
       end
 
       private
