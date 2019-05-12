@@ -34,7 +34,9 @@ module Jekyll
           unless options["style"].nil?
             options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
           end
-          options["line_numbers"] = true if !!options["debug"]
+          if options["debug"] == true && options["style"] != :compressed
+            options[:line_comments] = true
+          end
           options
         end
       end

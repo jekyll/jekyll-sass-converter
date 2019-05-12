@@ -69,9 +69,9 @@ describe(Jekyll::Converters::Sass) do
     end
 
     it "does not include source line-number comments unless asked to debug uncompressed CSS" do
-      debug_uncompressed = converter({ "style" => :nested, "debug" => true }).convert(content)
-      debug_compressed = converter({ "style" => :compressed, "debug" => true }).convert(content)
-      expect(debug_uncompressed).to eql("/* line 3 */\n#{css_output}")
+      debug_uncompressed = converter("style" => :nested, "debug" => true).convert(content)
+      debug_compressed = converter("style" => :compressed, "debug" => true).convert(content)
+      expect(debug_uncompressed).to eql("/* line 3, stdin */\n#{css_output}")
       expect(debug_compressed).to eql(compressed(css_output))
     end
   end
