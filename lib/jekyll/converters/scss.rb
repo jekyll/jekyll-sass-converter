@@ -34,10 +34,9 @@ module Jekyll
           unless options["style"].nil?
             options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
           end
+          options["line_numbers"] = true if !!options["debug"]
           options
         end
-        options["line_numbers"] = true if !!options["debug"]
-        options
       end
 
       def sass_build_configuration_options(overrides)
