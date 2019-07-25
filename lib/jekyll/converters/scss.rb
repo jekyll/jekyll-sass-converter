@@ -124,8 +124,8 @@ module Jekyll
         output = SassC::Engine.new(content.dup, sass_configs).render
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
-      rescue SassC::SyntaxError => exception
-        raise SyntaxError, exception.to_s
+      rescue SassC::SyntaxError => e
+        raise SyntaxError, e.to_s
       end
 
       private
