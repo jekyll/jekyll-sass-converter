@@ -8,6 +8,8 @@ module Jekyll
   module Converters
     class Scss < Converter
       BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
+      EXTENSION_PATTERN = %r!^\.scss$!i.freeze
+
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -63,7 +65,7 @@ module Jekyll
       end
 
       def matches(ext)
-        ext =~ %r!^\.scss$!i
+        ext =~ self.class::EXTENSION_PATTERN
       end
 
       def output_ext(_ext)
@@ -125,6 +127,7 @@ module Jekyll
         paths = user_sass_load_paths +
           [sass_dir_relative_to_site_source] +
           Array(::Sass.load_paths)
+        paths << site.theme.sass_path if site.theme&.sass_path
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
@@ -173,14 +176,13 @@ module Jekyll
 
       def convert(content)
         config = sass_configs
-        engine = ::SassC::Engine.new(content.dup, config)
+        engine = SassC::Engine.new(content.dup, config)
         output = engine.render
         generate_source_map(engine) if sourcemap_required?
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
-      rescue ::SassC::SyntaxError => e
-        line = e.instance_variable_get(:@line)
-        raise SyntaxError, "#{e} on line #{line}"
+      rescue SassC::SyntaxError => e
+        raise SyntaxError, e.to_s
       end
 
       private
@@ -269,11 +271,15 @@ module Jekyll
       end
 
       def site
-        sass_page.site unless associate_page_failed?
+        if associate_page_failed?
+          Jekyll.sites.last
+        else
+          sass_page.site
+        end
       end
 
       def site_source
-        @site_source ||= File.expand_path(@config["source"]).freeze
+        @site_source ||= site.source
       end
     end
   end

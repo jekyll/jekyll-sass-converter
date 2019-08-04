@@ -4,11 +4,15 @@
 
   * Target Ruby 2.3 (#70)
   * Memoize #jekyll_sass_configuration (#82)
+  * SyntaxError line and filename are set by SassC (#85)
+  * Configure Sass to load from theme-gem if possible (#80)
 
 ### Development Fixes
 
   * Add appveyor.yml (#76)
   * Lint with rubocop-jekyll (#73)
+  * Cache stateless regexes in class constants (#83)
+  * Clear out RuboCop TODO (#87)
 
 ### Major Enhancements
 

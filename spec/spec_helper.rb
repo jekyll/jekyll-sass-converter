@@ -33,17 +33,23 @@ RSpec.configure do |config|
   end
 
   def site_configuration(overrides = {})
-    Jekyll.configuration(overrides.merge(
-                           "source"      => source_dir,
-                           "destination" => dest_dir
-                         ))
+    Jekyll.configuration(
+      overrides.merge(
+        "source"      => source_dir,
+        "destination" => dest_dir
+      )
+    )
+  end
+
+  def make_site(config)
+    Jekyll::Site.new(site_configuration.merge(config))
   end
 
   def scss_converter_instance(site)
-    if Jekyll::VERSION >= "3.0"
-      site.find_converter_instance(Jekyll::Converters::Scss)
-    else
-      site.getConverterImpl(Jekyll::Converters::Scss)
-    end
+    site.find_converter_instance(Jekyll::Converters::Scss)
+  end
+
+  def sass_converter_instance(site)
+    site.find_converter_instance(Jekyll::Converters::Sass)
   end
 end

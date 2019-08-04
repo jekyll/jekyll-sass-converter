@@ -34,7 +34,9 @@ describe(Jekyll::Converters::Scss) do
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Scss.new(site_configuration("sass" => overrides))
+    scss_converter_instance(site).dup.tap do |obj|
+      obj.instance_variable_get(:@config)["sass"] = overrides
+    end
   end
 
   context "matching file extensions" do
@@ -71,7 +73,8 @@ describe(Jekyll::Converters::Scss) do
       context "when the sass dir exists" do
         it "allow the user to specify a different sass dir" do
           FileUtils.mkdir(source_dir("_scss"))
-          expect(converter("sass_dir" => "_scss").sass_configs[:load_paths]).to eql([source_dir("_scss")])
+          override = { "sass_dir" => "_scss" }
+          expect(converter(override).sass_configs[:load_paths]).to eql([source_dir("_scss")])
           FileUtils.rmdir(source_dir("_scss"))
         end
 
@@ -85,10 +88,12 @@ describe(Jekyll::Converters::Scss) do
 
     context "in safe mode" do
       let(:verter) do
-        Jekyll::Converters::Scss.new(site.config.merge(
-                                       "sass" => {},
-                                       "safe" => true
-                                     ))
+        Jekyll::Converters::Scss.new(
+          site.config.merge(
+            "sass" => {},
+            "safe" => true
+          )
+        )
       end
 
       it "does not allow caching" do
@@ -116,11 +121,12 @@ describe(Jekyll::Converters::Scss) do
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(compressed(css_output))
+      expect(converter.convert(content)).to eql(css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = %r!\AError: Invalid CSS after "body": expected 1 selector or at-rule, was "{"\s+on line 2!
+      error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
+      error_message = %r!\A#{error_message}\s+on line 2!
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
@@ -128,13 +134,14 @@ describe(Jekyll::Converters::Scss) do
 
     it "removes byte order mark from compressed SCSS" do
       result = converter("style" => :compressed).convert("a{content:\"\uF015\"}")
-      expect(result).to eql("a{content:\"\uF015\"}\n")
+      expect(result).to eql(%(a{content:"\uF015"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
 
     it "does not include the charset unless asked to" do
-      result = converter("style" => :compressed, "add_charset" => true).convert("a{content:\"\uF015\"}")
-      expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
+      overrides = { "style" => :compressed, "add_charset" => true }
+      result = converter(overrides).convert(%(a{content:"\uF015"}))
+      expect(result).to eql(%(@charset "UTF-8";a{content:"\uF015"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
@@ -148,7 +155,9 @@ describe(Jekyll::Converters::Scss) do
     end
 
     it "imports SCSS partial" do
-      expect(File.read(test_css_file)).to eql(".half{width:50%}\n\n/*# sourceMappingURL=main.css.map */")
+      expect(File.read(test_css_file)).to eql(
+        ".half{width:50%}\n\n/*# sourceMappingURL=main.css.map */"
+      )
     end
 
     it "uses a compressed style" do
@@ -165,12 +174,12 @@ describe(Jekyll::Converters::Scss) do
 
     context "unsafe mode" do
       let(:site) do
-        Jekyll::Site.new(site_configuration.merge(
-                           "source" => sass_lib,
-                           "sass"   => {
-                             "load_paths" => external_library,
-                           }
-                         ))
+        make_site(
+          "source" => sass_lib,
+          "sass"   => {
+            "load_paths" => external_library,
+          }
+        )
       end
       before(:each) do
         FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
@@ -189,20 +198,22 @@ describe(Jekyll::Converters::Scss) do
 
       it "brings in the grid partial" do
         site.process
-        expect(File.read(test_css_file)).to eql("a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */")
+        expect(File.read(test_css_file)).to eql(
+          "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
+        )
       end
 
       context "with the sass_dir specified twice" do
         let(:site) do
-          Jekyll::Site.new(site_configuration.merge(
-                             "source" => sass_lib,
-                             "sass"   => {
-                               "load_paths" => [
-                                 external_library,
-                                 sass_lib("_sass"),
-                               ],
-                             }
-                           ))
+          make_site(
+            "source" => sass_lib,
+            "sass"   => {
+              "load_paths" => [
+                external_library,
+                sass_lib("_sass"),
+              ],
+            }
+          )
         end
 
         it "ensures the sass_dir only occurrs once in the load path" do
@@ -213,13 +224,13 @@ describe(Jekyll::Converters::Scss) do
 
     context "safe mode" do
       let(:site) do
-        Jekyll::Site.new(site_configuration.merge(
-                           "safe"   => true,
-                           "source" => sass_lib,
-                           "sass"   => {
-                             "load_paths" => external_library,
-                           }
-                         ))
+        make_site(
+          "safe"   => true,
+          "source" => sass_lib,
+          "sass"   => {
+            "load_paths" => external_library,
+          }
+        )
       end
 
       it "ignores the new load path" do
@@ -246,11 +257,11 @@ describe(Jekyll::Converters::Scss) do
 
     context "unsafe mode" do
       let(:site) do
-        Jekyll::Site.new(site_configuration.merge(
-                           "sass" => {
-                             "load_paths" => ["bower_components/*"],
-                           }
-                         ))
+        make_site(
+          "sass" => {
+            "load_paths" => ["bower_components/*"],
+          }
+        )
       end
 
       it "expands globs" do
@@ -260,16 +271,18 @@ describe(Jekyll::Converters::Scss) do
 
     context "safe mode" do
       let(:site) do
-        Jekyll::Site.new(site_configuration.merge(
-                           "safe" => true,
-                           "sass" => {
-                             "load_paths" => [
-                               "bower_components/*",
-                               Dir.tmpdir,
-                               "../..",
-                             ],
-                           }
-                         ))
+        Jekyll::Site.new(
+          site_configuration.merge(
+            "safe" => true,
+            "sass" => {
+              "load_paths" => [
+                Dir.tmpdir,
+                "bower_components/*",
+                "../..",
+              ],
+            }
+          )
+        )
       end
 
       it "allows local load paths" do

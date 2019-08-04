@@ -31,7 +31,9 @@ describe(Jekyll::Converters::Sass) do
   end
 
   def converter(overrides = {})
-    Jekyll::Converters::Sass.new(site_configuration("sass" => overrides))
+    sass_converter_instance(site).dup.tap do |obj|
+      obj.instance_variable_get(:@config)["sass"] = overrides
+    end
   end
 
   context "matching file extensions" do
@@ -46,25 +48,27 @@ describe(Jekyll::Converters::Sass) do
 
   context "converting sass" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(compressed(css_output))
+      expect(converter.convert(content)).to eql(css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = %r!\AError: Invalid CSS after "f": expected 1 selector or at-rule. was "font-family: \$font-"\s+on line 1 of stdin!
+      error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
+      error_message = %r!\A#{error_message} was "font-family: \$font-"\s+on line 1 of stdin!
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
     end
 
     it "removes byte order mark from compressed Sass" do
-      result = converter("style" => :compressed).convert("a\n  content: \"\uF015\"")
-      expect(result).to eql("a{content:\"\uF015\"}\n")
+      result = converter("style" => :compressed).convert(%(a\n  content: "\uF015"))
+      expect(result).to eql(%(a{content:"\uF015"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
 
     it "does not include the charset if asked not to" do
-      result = converter("style" => :compressed, "add_charset" => true).convert("a\n  content: \"\uF015\"")
-      expect(result).to eql("@charset \"UTF-8\";a{content:\"\uF015\"}\n")
+      overrides = { "style" => :compressed, "add_charset" => true }
+      result = converter(overrides).convert(%(a\n  content: "\uF015"))
+      expect(result).to eql(%(@charset "UTF-8";a{content:"\uF015"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
