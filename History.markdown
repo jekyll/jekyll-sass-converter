@@ -13,13 +13,11 @@
   * Lint with rubocop-jekyll (#73)
   * Cache stateless regexes in class constants (#83)
   * Clear out RuboCop TODO (#87)
+  * Drop support for Ruby 2.3 (#90)
 
 ### Major Enhancements
 
-  * Migrate to sassc gem (#75)
-
-### -minor
-
+  * Migrate to sassc gem ### -minor (#75)
   * Generate Sass Sourcemaps (#79)
 
 ## 1.5.2 / 2017-02-03
