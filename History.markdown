@@ -1,24 +1,24 @@
-## HEAD
-
-### Minor Enhancements
-
-  * Target Ruby 2.3 (#70)
-  * Memoize #jekyll_sass_configuration (#82)
-  * SyntaxError line and filename are set by SassC (#85)
-  * Configure Sass to load from theme-gem if possible (#80)
-
-### Development Fixes
-
-  * Add appveyor.yml (#76)
-  * Lint with rubocop-jekyll (#73)
-  * Cache stateless regexes in class constants (#83)
-  * Clear out RuboCop TODO (#87)
-  * Drop support for Ruby 2.3 (#90)
+## 2.0.0.pre.beta / 2019-08-04
 
 ### Major Enhancements
 
-  * Migrate to sassc gem ### -minor (#75)
+  * Migrate to sassc gem (#75)
+  * Drop support for Ruby 2.3 (#90)
+
+### Minor Enhancements
+
   * Generate Sass Sourcemaps (#79)
+  * Configure Sass to load from theme-gem if possible (#80)
+  * SyntaxError line and filename are set by SassC (#85)
+  * Memoize #jekyll_sass_configuration (#82)
+
+### Development Fixes
+
+  * Target Ruby 2.3 (#70)
+  * Lint with rubocop-jekyll (#73)
+  * Clear out RuboCop TODO (#87)
+  * Cache stateless regexes in class constants (#83)
+  * Add appveyor.yml (#76)
 
 ### Bug Fixes
 
