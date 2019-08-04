@@ -132,7 +132,7 @@ module Jekyll
       private
 
       def site
-        @site ||= Jekyll.sites.first
+        @site ||= Jekyll.sites.last
       end
 
       def site_source
