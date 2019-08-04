@@ -17,7 +17,7 @@ describe(Jekyll::Converters::Sass) do
   end
   let(:css_output) do
     <<~CSS
-      body {\n  font-family: Helvetica, sans-serif;\n  font-color: fuschia; }
+      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
   end
   let(:invalid_content) do
