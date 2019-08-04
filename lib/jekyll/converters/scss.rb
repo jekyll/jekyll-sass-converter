@@ -79,9 +79,10 @@ module Jekyll
         Jekyll.sanitized_path(site_source, sass_dir)
       end
 
+      # rubocop:disable Metrics/AbcSize
       def sass_load_paths
         paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
-        paths << site.theme.sass_path if site.theme && site.theme.sass_path
+        paths << site.theme.sass_path if site.theme&.sass_path
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
@@ -104,6 +105,7 @@ module Jekyll
 
         paths.select { |path| File.directory?(path) }
       end
+      # rubocop:enable Metrics/AbcSize
 
       def allow_caching?
         !safe?
