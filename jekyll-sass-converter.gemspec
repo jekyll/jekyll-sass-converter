@@ -16,13 +16,13 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").grep(%r!^lib/!)
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.3.0"
+  spec.required_ruby_version = ">= 2.3.3"
 
-  spec.add_runtime_dependency "sass", "~> 3.4"
+  spec.add_runtime_dependency "sassc", "~> 2.0"
 
-  spec.add_development_dependency "bundler", "~> 1.15"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "jekyll", "~> 3.0"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
-  spec.add_development_dependency "rubocop", "~> 0.57.2"
+  spec.add_development_dependency "rubocop-jekyll", "~> 0.4"
 end

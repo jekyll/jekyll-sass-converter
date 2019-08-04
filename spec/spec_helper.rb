@@ -33,10 +33,16 @@ RSpec.configure do |config|
   end
 
   def site_configuration(overrides = {})
-    Jekyll.configuration(overrides.merge({
-      "source"      => source_dir,
-      "destination" => dest_dir,
-    }))
+    Jekyll.configuration(
+      overrides.merge(
+        "source"      => source_dir,
+        "destination" => dest_dir
+      )
+    )
+  end
+
+  def make_site(config)
+    Jekyll::Site.new(site_configuration.merge(config))
   end
 
   def scss_converter_instance(site)

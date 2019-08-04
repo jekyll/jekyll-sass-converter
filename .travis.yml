@@ -1,17 +1,15 @@
-sudo: false
 cache: bundler
 language: ruby
 rvm:
-  - 2.5
+  - 2.6
   - 2.4
-  - 2.3
 matrix:
   include:
-    - rvm: 2.4.2
-      env: JEKYLL_VERSION=3.7.3
+    - rvm: 2.5
+      env: JEKYLL_VERSION=3.7.4
 env:
   matrix:
-    - JEKYLL_VERSION=3.7.3
+    - JEKYLL_VERSION=3.8.5
 branches:
   only:
     - master

@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-require "sass"
+require "sassc"
 require "jekyll/utils"
 
 module Jekyll
   module Converters
     class Scss < Converter
-      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!
+      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
+      EXTENSION_PATTERN = %r!^\.scss$!i.freeze
+
       SyntaxError = Class.new(ArgumentError)
 
       safe true
@@ -15,7 +17,7 @@ module Jekyll
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       def matches(ext)
-        ext =~ %r!^\.scss$!i
+        ext =~ self.class::EXTENSION_PATTERN
       end
 
       def output_ext(_ext)
@@ -27,11 +29,13 @@ module Jekyll
       end
 
       def jekyll_sass_configuration
-        options = @config["sass"] || {}
-        unless options["style"].nil?
-          options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
+        @jekyll_sass_configuration ||= begin
+          options = @config["sass"] || {}
+          unless options["style"].nil?
+            options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
+          end
+          options
         end
-        options
       end
 
       def sass_build_configuration_options(overrides)
@@ -58,6 +62,7 @@ module Jekyll
 
       def sass_dir
         return "_sass" if jekyll_sass_configuration["sass_dir"].to_s.empty?
+
         jekyll_sass_configuration["sass_dir"]
       end
 
@@ -109,19 +114,19 @@ module Jekyll
       end
 
       def sass_configs
-        sass_build_configuration_options({
+        sass_build_configuration_options(
           "syntax"     => syntax,
           "cache"      => allow_caching?,
-          "load_paths" => sass_load_paths,
-        })
+          "load_paths" => sass_load_paths
+        )
       end
 
       def convert(content)
-        output = ::Sass.compile(content, sass_configs)
+        output = SassC::Engine.new(content.dup, sass_configs).render
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
-      rescue ::Sass::SyntaxError => e
-        raise SyntaxError, "#{e} on line #{e.sass_line}"
+      rescue SassC::SyntaxError => e
+        raise SyntaxError, e.to_s
       end
 
       private
@@ -131,7 +136,7 @@ module Jekyll
       end
 
       def site_source
-        @site_source ||= File.expand_path(@config["source"]).freeze
+        @site_source ||= site.source
       end
     end
   end
