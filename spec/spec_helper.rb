@@ -46,10 +46,10 @@ RSpec.configure do |config|
   end
 
   def scss_converter_instance(site)
-    if Jekyll::VERSION >= "3.0"
-      site.find_converter_instance(Jekyll::Converters::Scss)
-    else
-      site.getConverterImpl(Jekyll::Converters::Scss)
-    end
+    site.find_converter_instance(Jekyll::Converters::Scss)
+  end
+
+  def sass_converter_instance(site)
+    site.find_converter_instance(Jekyll::Converters::Sass)
   end
 end
