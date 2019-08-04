@@ -20,6 +20,10 @@
   * Migrate to sassc gem ### -minor (#75)
   * Generate Sass Sourcemaps (#79)
 
+### Bug Fixes
+
+  * Fix rendering of sourcemap page (#89)
+
 ## 1.5.2 / 2017-02-03
 
 ### Development Fixes
