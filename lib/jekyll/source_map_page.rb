@@ -18,7 +18,7 @@ module Jekyll
     end
 
     def source_map(map)
-      self.output = map
+      self.content = map
     end
 
     def ext

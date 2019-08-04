@@ -279,7 +279,7 @@ module Jekyll
       end
 
       def site_source
-        @site_source ||= site.source
+        site.source
       end
     end
   end
