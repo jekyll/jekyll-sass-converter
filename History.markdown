@@ -5,6 +5,7 @@
   * Target Ruby 2.3 (#70)
   * Memoize #jekyll_sass_configuration (#82)
   * SyntaxError line and filename are set by SassC (#85)
+  * Configure Sass to load from theme-gem if possible (#80)
 
 ### Development Fixes
 
