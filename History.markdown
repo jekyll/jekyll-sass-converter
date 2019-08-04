@@ -18,6 +18,10 @@
 
   * Migrate to sassc gem (#75)
 
+### -minor
+
+  * Generate Sass Sourcemaps (#79)
+
 ## 1.5.2 / 2017-02-03
 
 ### Development Fixes
