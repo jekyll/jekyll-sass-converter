@@ -1,4 +1,10 @@
-## 2.0.0.pre.beta / 2019-08-04
+## HEAD
+
+### Major Enhancements
+
+  * Use and test sassc-2.1.0 pre-releases and beyond (#86)
+
+## 2.0.0
 
 ### Major Enhancements
 
