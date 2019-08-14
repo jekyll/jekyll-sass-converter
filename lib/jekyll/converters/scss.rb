@@ -124,9 +124,7 @@ module Jekyll
 
       # rubocop:disable Metrics/AbcSize
       def sass_load_paths
-        paths = user_sass_load_paths +
-          [sass_dir_relative_to_site_source] +
-          Array(::Sass.load_paths)
+        paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
         paths << site.theme.sass_path if site.theme&.sass_path
 
         if safe?
@@ -136,7 +134,7 @@ module Jekyll
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(site_source) do
-          paths = paths.map { |path| Dir.glob(path) }.flatten.uniq
+          paths = paths.flat_map { |path| Dir.glob(path) }.uniq
 
           paths.map! do |path|
             if safe?
