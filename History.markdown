@@ -1,14 +1,9 @@
-## HEAD
-
-### Major Enhancements
-
-  * Use and test sassc-2.1.0 pre-releases and beyond (#86)
-
-## 2.0.0
+## 2.0.0 - 2019-08-14
 
 ### Major Enhancements
 
   * Migrate to sassc gem (#75)
+  * Use and test sassc-2.1.0 pre-releases and beyond (#86)
   * Drop support for Ruby 2.3 (#90)
 
 ### Minor Enhancements
