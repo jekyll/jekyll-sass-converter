@@ -72,4 +72,27 @@ describe(Jekyll::Converters::Sass) do
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
+
+  context "in a site with a collection labelled 'pages'" do
+    let(:site) do
+      make_site(
+        "source"      => File.expand_path("pages-collection", __dir__),
+        "sass"        => {
+          "style" => :compact,
+        },
+        "collections" => {
+          "pages" => {
+            "output" => true,
+          },
+        }
+      )
+    end
+
+    let(:verter) { sass_converter_instance(site) }
+
+    it "produces CSS without raising errors" do
+      expect { site.process }.not_to raise_error
+      expect(verter.convert(content)).to eql(css_output)
+    end
+  end
 end
