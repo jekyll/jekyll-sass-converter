@@ -3,13 +3,9 @@ language: ruby
 rvm:
   - &latest_ruby 2.6
   - 2.4
-matrix:
-  include:
-    - rvm: *latest_ruby
-      env: JEKYLL_VERSION=3.8.6
 env:
   matrix:
-    - JEKYLL_VERSION=4.0.0.pre.alpha1
+    - JEKYLL_VERSION=4.0
 branches:
   only:
     - master

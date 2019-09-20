@@ -310,7 +310,6 @@ describe(Jekyll::Converters::Scss) do
         )
       end
 
-
       it "includes the theme's sass directory" do
         expect(site.theme.sass_path).to be_truthy
         expect(converter.sass_load_paths).to include(site.theme.sass_path)
