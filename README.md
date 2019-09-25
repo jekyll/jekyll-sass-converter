@@ -27,7 +27,7 @@ Or install it yourself as:
 
 Jekyll Sass Converter comes bundled with Jekyll 2.0.0 and greater. For more
 information about usage, visit the [Jekyll Assets Documentation
-page](http://jekyllrb.com/docs/assets/).
+page](https://jekyllrb.com/docs/assets/).
 
 ### Source Maps
 
@@ -57,7 +57,7 @@ Available options are:
 
     Sets the style of the CSS-output.
     Can be `nested`, `compact`, `compressed`, or `expanded`.
-    See the [SASS_REFERENCE](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style)
+    See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
     for details.
 
     Defaults to `compact`.
@@ -91,7 +91,7 @@ Available options are:
 
 ## Contributing
 
-1. Fork it ( http://github.com/jekyll/jekyll-sass-converter/fork )
+1. Fork it ( https://github.com/jekyll/jekyll-sass-converter/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
