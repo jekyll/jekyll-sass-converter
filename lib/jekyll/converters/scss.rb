@@ -18,6 +18,8 @@ module Jekyll
       # This hook is triggered just before the method {#convert(content)} is executed, it
       # associates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :pre_render do |page|
+        next unless page.is_a?(Jekyll::Page)
+
         page.converters.each do |converter|
           converter.associate_page(page) if converter.is_a?(Jekyll::Converters::Scss)
         end
@@ -26,6 +28,8 @@ module Jekyll
       # This hook is triggered just after the method {#convert(content)} has been executed, it
       # dissociates the Scss (and Sass) converters with their respective sass_page objects.
       Jekyll::Hooks.register :pages, :post_render do |page|
+        next unless page.is_a?(Jekyll::Page)
+
         page.converters.each do |converter|
           converter.dissociate_page(page) if converter.is_a?(Jekyll::Converters::Scss)
         end
