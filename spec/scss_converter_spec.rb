@@ -333,4 +333,27 @@ describe(Jekyll::Converters::Scss) do
       end
     end
   end
+
+  context "in a site with a collection labelled 'pages'" do
+    let(:site) do
+      make_site(
+        "source"      => File.expand_path("pages-collection", __dir__),
+        "sass"        => {
+          "style" => :compact,
+        },
+        "collections" => {
+          "pages" => {
+            "output" => true,
+          },
+        }
+      )
+    end
+
+    let(:verter) { scss_converter_instance(site) }
+
+    it "produces CSS without raising errors" do
+      expect { site.process }.not_to raise_error
+      expect(verter.convert(content)).to eql(css_output)
+    end
+  end
 end
