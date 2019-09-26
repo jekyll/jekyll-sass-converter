@@ -129,7 +129,6 @@ module Jekyll
       # rubocop:disable Metrics/AbcSize
       def sass_load_paths
         paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
-        paths << site.theme.sass_path if site.theme&.sass_path
 
         if safe?
           # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
@@ -150,6 +149,7 @@ module Jekyll
           end
         end
 
+        paths << site.theme.sass_path if site.theme&.sass_path
         paths.select { |path| File.directory?(path) }
       end
       # rubocop:enable Metrics/AbcSize

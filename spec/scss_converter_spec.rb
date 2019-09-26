@@ -302,6 +302,38 @@ describe(Jekyll::Converters::Scss) do
     end
   end
 
+  context "with valid sass paths in a theme" do
+    context "in unsafe mode" do
+      let(:site) do
+        Jekyll::Site.new(
+          site_configuration.merge("theme" => "minima")
+        )
+      end
+
+      it "includes the theme's sass directory" do
+        expect(site.theme.sass_path).to be_truthy
+        expect(converter.sass_load_paths).to include(site.theme.sass_path)
+      end
+    end
+
+    context "in safe mode" do
+      let(:site) do
+        Jekyll::Site.new(
+          site_configuration.merge(
+            "theme" => "minima",
+            "safe"  => true
+          )
+        )
+      end
+
+      it "includes the theme's sass directory" do
+        expect(site.safe).to be true
+        expect(site.theme.sass_path).to be_truthy
+        expect(converter.sass_load_paths).to include(site.theme.sass_path)
+      end
+    end
+  end
+
   context "in a site with a collection labelled 'pages'" do
     let(:site) do
       make_site(
