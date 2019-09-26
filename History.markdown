@@ -1,11 +1,11 @@
-## HEAD
+## 2.0.1 / 2019-09-26
 
 ### Bug Fixes
 
   * Do not register hooks for documents of type :pages (#94)
   * Append theme&#39;s sass path after all sanitizations (#96)
 
-## 2.0.0
+## 2.0.0 / 2019-08-14
 
 ### Major Enhancements
 
