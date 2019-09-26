@@ -3,6 +3,7 @@
 ### Bug Fixes
 
   * Do not register hooks for documents of type :pages (#94)
+  * Append theme&#39;s sass path after all sanitizations (#96)
 
 ## 2.0.0
 
