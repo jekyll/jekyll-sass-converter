@@ -1,4 +1,10 @@
-## 2.0.0 - 2019-08-14
+## HEAD
+
+### Bug Fixes
+
+  * Do not register hooks for documents of type :pages (#94)
+
+## 2.0.0
 
 ### Major Enhancements
 
