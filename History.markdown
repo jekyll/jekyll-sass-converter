@@ -1,3 +1,9 @@
+## HEAD
+
+### Development Fixes
+
+  * chore(ci): use Ubuntu 18.04 (bionic) (#100)
+
 ## 2.0.1 / 2019-09-26
 
 ### Bug Fixes
