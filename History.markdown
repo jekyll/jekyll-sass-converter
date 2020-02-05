@@ -4,6 +4,10 @@
 
   * chore(ci): use Ubuntu 18.04 (bionic) (#100)
 
+### Minor Enhancements
+
+  * Fix `Scss#sass_dir_relative_to_site_source` logic (#99)
+
 ## 2.0.1 / 2019-09-26
 
 ### Bug Fixes
