@@ -123,7 +123,9 @@ module Jekyll
       end
 
       def sass_dir_relative_to_site_source
-        Jekyll.sanitized_path(site_source, sass_dir)
+        @sass_dir_relative_to_site_source ||= begin
+          Jekyll.sanitized_path(site_source, sass_dir).sub(site.source + "/", "")
+        end
       end
 
       # rubocop:disable Metrics/AbcSize
