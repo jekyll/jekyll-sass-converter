@@ -1,7 +1,8 @@
+dist: bionic
 cache: bundler
 language: ruby
 rvm:
-  - &latest_ruby 2.6
+  - 2.6.5
   - 2.4
 env:
   matrix:
