@@ -139,7 +139,7 @@ module Jekyll
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(site_source) do
-          paths = paths.flat_map { |path| Dir.glob(path) }.uniq
+          paths = paths.flat_map { |path| Dir.glob(path) }
 
           paths.map! do |path|
             if safe?
@@ -151,6 +151,7 @@ module Jekyll
           end
         end
 
+        paths.uniq!
         paths << site.theme.sass_path if site.theme&.sass_path
         paths.select { |path| File.directory?(path) }
       end
