@@ -1,4 +1,4 @@
-## HEAD
+## 2.1.0 / 2020-02-05
 
 ### Development Fixes
 
