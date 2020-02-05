@@ -95,4 +95,22 @@ describe(Jekyll::Converters::Sass) do
       expect(verter.convert(content)).to eql(css_output)
     end
   end
+
+  context "in a site nested inside directory with square brackets" do
+    let(:site) do
+      make_site(
+        "source" => File.expand_path("[alpha]beta", __dir__),
+        "sass"   => {
+          "style" => :compact,
+        }
+      )
+    end
+
+    let(:verter) { sass_converter_instance(site) }
+
+    it "produces CSS without raising errors" do
+      expect { site.process }.not_to raise_error
+      expect(verter.convert(content)).to eql(css_output)
+    end
+  end
 end

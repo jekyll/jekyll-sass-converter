@@ -81,7 +81,7 @@ describe(Jekyll::Converters::Scss) do
         it "not allow sass_dirs outside of site source" do
           expect(
             converter("sass_dir" => "/etc/passwd").sass_dir_relative_to_site_source
-          ).to eql(source_dir("etc/passwd"))
+          ).to eql("etc/passwd")
         end
       end
     end
@@ -345,6 +345,24 @@ describe(Jekyll::Converters::Scss) do
           "pages" => {
             "output" => true,
           },
+        }
+      )
+    end
+
+    let(:verter) { scss_converter_instance(site) }
+
+    it "produces CSS without raising errors" do
+      expect { site.process }.not_to raise_error
+      expect(verter.convert(content)).to eql(css_output)
+    end
+  end
+
+  context "in a site nested inside directory with square brackets" do
+    let(:site) do
+      make_site(
+        "source" => File.expand_path("[alpha]beta", __dir__),
+        "sass"   => {
+          "style" => :compact,
         }
       )
     end

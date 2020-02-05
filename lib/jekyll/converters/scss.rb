@@ -123,7 +123,9 @@ module Jekyll
       end
 
       def sass_dir_relative_to_site_source
-        Jekyll.sanitized_path(site_source, sass_dir)
+        @sass_dir_relative_to_site_source ||= begin
+          Jekyll.sanitized_path(site_source, sass_dir).sub(site.source + "/", "")
+        end
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -137,7 +139,7 @@ module Jekyll
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(site_source) do
-          paths = paths.flat_map { |path| Dir.glob(path) }.uniq
+          paths = paths.flat_map { |path| Dir.glob(path) }
 
           paths.map! do |path|
             if safe?
@@ -149,6 +151,7 @@ module Jekyll
           end
         end
 
+        paths.uniq!
         paths << site.theme.sass_path if site.theme&.sass_path
         paths.select { |path| File.directory?(path) }
       end
