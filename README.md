@@ -61,12 +61,18 @@ Available options are:
     for details.
 
     Defaults to `compact`.
-
+      
   * **`sass_dir`**
 
-    An array of filesystem-paths which should be searched for Sass partials.
+    A filesystem-path which should be searched for Sass partials.
 
     Defaults to `_sass`
+    
+  * **`load_paths`**
+
+    An array of additional filesystem-paths which should be searched for Sass partials.
+
+    Defaults to `[]`
 
   * **`line_comments`**
 
