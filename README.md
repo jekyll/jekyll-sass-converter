@@ -61,13 +61,13 @@ Available options are:
     for details.
 
     Defaults to `compact`.
-      
+
   * **`sass_dir`**
 
     A filesystem-path which should be searched for Sass partials.
 
     Defaults to `_sass`
-    
+
   * **`load_paths`**
 
     An array of additional filesystem-paths which should be searched for Sass partials.
