@@ -14,6 +14,14 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.order = "random"
 
+  config.before(:example) do
+    implementation = ENV["SASS_IMPLEMENTATION"]&.to_sym
+    unless implementation.nil?
+      allow_any_instance_of(Jekyll::Converters::Scss)
+        .to(receive(:sass_implementation).and_return(implementation))
+    end
+  end
+
   SOURCE_DIR   = File.expand_path("source", __dir__)
   DEST_DIR     = File.expand_path("dest",   __dir__)
   SASS_LIB_DIR = File.expand_path("other_sass_library", __dir__)

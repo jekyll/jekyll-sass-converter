@@ -23,7 +23,10 @@ describe(Jekyll::Converters::Sass) do
 
   let(:css_output) do
     <<~CSS
-      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
+      body {
+        font-family: Helvetica, sans-serif;
+        font-color: fuschia;
+      }
     CSS
   end
 
@@ -55,8 +58,7 @@ describe(Jekyll::Converters::Sass) do
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
-      error_message = %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
+      error_message = %r!Expected!i
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
@@ -81,7 +83,7 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :compact,
+          "style" => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -102,7 +104,7 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :compact,
+          "style" => :expanded,
         }
       )
     end

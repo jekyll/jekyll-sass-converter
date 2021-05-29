@@ -5,3 +5,5 @@ gemspec
 
 gem "jekyll", ENV["JEKYLL_VERSION"] ? "~> #{ENV["JEKYLL_VERSION"]}" : ">= 4.0"
 gem "minima"
+
+gem "sass-embedded", "~> 0.7.27" if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.0")

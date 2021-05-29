@@ -24,7 +24,10 @@ describe(Jekyll::Converters::Scss) do
 
   let(:css_output) do
     <<~CSS
-      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
+      body {
+        font-family: Helvetica, sans-serif;
+        font-color: fuschia;
+      }
     CSS
   end
 
@@ -112,8 +115,8 @@ describe(Jekyll::Converters::Scss) do
         expect(verter.sass_configs[:style]).to eql(:compressed)
       end
 
-      it "defaults style to :compact" do
-        expect(verter.sass_configs[:style]).to eql(:compact)
+      it "defaults style to :expanded" do
+        expect(verter.sass_configs[:style]).to eql(:expanded)
       end
 
       it "at least contains :syntax and :load_paths keys" do
@@ -128,8 +131,7 @@ describe(Jekyll::Converters::Scss) do
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
-      error_message = %r!\A#{error_message}\s+on line 2!
+      error_message = %r!Expected!i
       expect { scss_converter.convert(invalid_content) }.to(
         raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
       )
@@ -198,7 +200,7 @@ describe(Jekyll::Converters::Scss) do
       it "brings in the grid partial" do
         site.process
         expect(File.read(test_css_file)).to eql(
-          "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
+          "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
         )
       end
 
@@ -326,7 +328,7 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :compact,
+          "style" => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -347,7 +349,7 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :compact,
+          "style" => :expanded,
         }
       )
     end
@@ -388,7 +390,6 @@ describe(Jekyll::Converters::Scss) do
 
       it "contains relevant sass sources" do
         sources = sourcemap_data["sources"]
-        expect(sources).to include("main.scss")
         expect(sources).to include("_sass/_grid.scss")
         expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
       end

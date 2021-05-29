@@ -53,6 +53,13 @@ Configuration options are specified in the `_config.yml` file in the following w
 
 Available options are:
 
+  * **`implementation`**
+
+    Sets the Sass implementation to use.
+    Can be `sassc` or `sass-embedded`.
+
+    Defaults to `sassc`.
+
   * **`style`**
 
     Sets the style of the CSS-output.
@@ -60,7 +67,7 @@ Available options are:
     See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
     for details.
 
-    Defaults to `compact`.
+    Defaults to `expanded`.
 
   * **`sass_dir`**
 
