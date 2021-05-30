@@ -206,7 +206,7 @@ module Jekyll
       def filename
         return "stdin" if associate_page_failed?
 
-        sass_page.name
+        File.join(site_source_relative_from_pwd, sass_page.name)
       end
 
       # The value of the `line_comments` option.
@@ -244,7 +244,7 @@ module Jekyll
       def output_path
         return "stdin.css" if associate_page_failed?
 
-        sass_page.basename + ".css"
+        File.join(site_source_relative_from_pwd, sass_page.basename + ".css")
       end
 
       # The name of the generated source map file. This information will be written into the
@@ -254,7 +254,7 @@ module Jekyll
       def source_map_file
         return "" if associate_page_failed?
 
-        sass_page.basename + ".css.map"
+        File.join(site_source_relative_from_pwd, sass_page.basename + ".css.map")
       end
 
       def source_map_page
@@ -285,6 +285,13 @@ module Jekyll
 
       def site_source
         site.source
+      end
+
+      def site_source_relative_from_pwd
+        @site_source_relative_from_pwd ||=
+          Pathname.new(site_source)
+                  .relative_path_from(Pathname.new(Dir.pwd))
+                  .to_s
       end
     end
   end

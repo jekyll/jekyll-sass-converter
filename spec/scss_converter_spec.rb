@@ -374,4 +374,28 @@ describe(Jekyll::Converters::Scss) do
       expect(verter.convert(content)).to eql(css_output)
     end
   end
+
+  context "with site source not equal to its default value Dir.pwd" do
+    context "generating sourcemap" do
+      let(:test_sourcemap_file) { dest_dir("css/main.css.map") }
+      before(:each) do
+        pwd = Dir.pwd
+        Dir.mktmpdir do |tmpdir|
+          Dir.chdir tmpdir
+          site.process
+          Dir.chdir pwd
+        end
+      end
+
+      it "outputs the sourcemap file" do
+        expect(File.exist?(test_sourcemap_file)).to be_truthy
+      end
+
+      it "does not leak directory structure outside of site source" do
+        JSON.parse(File.read(test_sourcemap_file))['sources'].each do |source|
+          expect(source).not_to include(site.source)
+        end
+      end
+    end
+  end
 end
