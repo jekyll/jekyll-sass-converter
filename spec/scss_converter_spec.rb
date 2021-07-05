@@ -374,4 +374,21 @@ describe(Jekyll::Converters::Scss) do
       expect(verter.convert(content)).to eql(css_output)
     end
   end
+
+  context "in a site with rouge syntax inside scss files as comment" do
+    let(:test_css_map_file) { dest_dir("css", "main.css.map") }
+    let(:site) do
+      make_site(
+        "source"      => File.expand_path("rouge", __dir__)
+      )
+    end
+
+    it "generates a valid sourcemap" do
+      site.process
+      expect(File.exist?(test_css_map_file)).to be_truthy
+      expect {
+        JSON.parse(File.read(test_css_map_file))
+      }.to_not raise_error
+    end
+  end
 end
