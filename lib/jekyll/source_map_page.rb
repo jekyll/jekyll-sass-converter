@@ -29,6 +29,10 @@ module Jekyll
       true
     end
 
+    def render_with_liquid?
+      false
+    end
+
     # @return[String] the object as a debug String.
     def inspect
       "#<#{self.class} @name=#{name.inspect}>"

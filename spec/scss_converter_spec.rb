@@ -416,4 +416,18 @@ describe(Jekyll::Converters::Scss) do
       end
     end
   end
+
+  context "generating sourcemap" do
+    let(:sourcemap_file) { dest_dir("css/app.css.map") }
+    let(:sourcemap_contents) { File.binread(sourcemap_file) }
+    before { site.process }
+
+    it "outputs the sourcemap file" do
+      expect(File.exist?(sourcemap_file)).to be true
+    end
+
+    it "should not have Liquid expressions rendered" do
+      expect(sourcemap_contents).to include("{{ site.mytheme.skin }}")
+    end
+  end
 end
