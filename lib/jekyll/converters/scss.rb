@@ -290,8 +290,8 @@ module Jekyll
       def site_source_relative_from_pwd
         @site_source_relative_from_pwd ||=
           Pathname.new(site_source)
-                  .relative_path_from(Pathname.new(Dir.pwd))
-                  .to_s
+            .relative_path_from(Pathname.new(Dir.pwd))
+            .to_s
       end
     end
   end

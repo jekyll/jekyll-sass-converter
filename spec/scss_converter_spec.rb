@@ -406,7 +406,7 @@ describe(Jekyll::Converters::Scss) do
         relative_path_parts = site_source_relative_from_pwd.split(File::SEPARATOR)
 
         expect(site_source_relative_from_pwd).to eql("spec/nested_source/src")
-        expect(relative_path_parts).to eql(["spec", "nested_source", "src"])
+        expect(relative_path_parts).to eql(%w(spec nested_source src))
 
         relative_path_parts.each do |dirname|
           sourcemap_data["sources"].each do |fpath|
