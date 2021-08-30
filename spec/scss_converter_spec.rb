@@ -375,25 +375,43 @@ describe(Jekyll::Converters::Scss) do
     end
   end
 
-  context "with site source not equal to its default value Dir.pwd" do
+  context "with site-source not equal to its default value of `Dir.pwd`" do
     context "generating sourcemap" do
-      let(:test_sourcemap_file) { dest_dir("css/main.css.map") }
-      before(:each) do
-        pwd = Dir.pwd
-        Dir.mktmpdir do |tmpdir|
-          Dir.chdir tmpdir
-          site.process
-          Dir.chdir pwd
-        end
+      let(:site) do
+        make_site(
+          "source" => File.expand_path("nested_source/src", __dir__)
+        )
       end
+      let(:test_sourcemap_file) { dest_dir("css/main.css.map") }
+      let(:sourcemap_data) { JSON.parse(File.binread(test_sourcemap_file)) }
+
+      before(:each) { site.process }
 
       it "outputs the sourcemap file" do
         expect(File.exist?(test_sourcemap_file)).to be_truthy
       end
 
-      it "does not leak directory structure outside of site source" do
-        JSON.parse(File.read(test_sourcemap_file))['sources'].each do |source|
-          expect(source).not_to include(site.source)
+      it "contains relevant sass sources" do
+        sources = sourcemap_data["sources"]
+        expect(sources).to include("main.scss")
+        expect(sources).to include("_sass/_grid.scss")
+        expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
+      end
+
+      it "does not leak directory structure outside of `site.source`" do
+        site_source_relative_from_pwd = \
+          Pathname.new(site.source)
+            .relative_path_from(Pathname.new(Dir.pwd))
+            .to_s
+        relative_path_parts = site_source_relative_from_pwd.split(File::SEPARATOR)
+
+        expect(site_source_relative_from_pwd).to eql("spec/nested_source/src")
+        expect(relative_path_parts).to eql(["spec", "nested_source", "src"])
+
+        relative_path_parts.each do |dirname|
+          sourcemap_data["sources"].each do |fpath|
+            expect(fpath).to_not include(dirname)
+          end
         end
       end
     end
