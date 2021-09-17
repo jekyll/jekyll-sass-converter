@@ -3,6 +3,7 @@
 ### Bug Fixes
 
   * Source map sources should to be relative to site.source (#119)
+  * Sourcemaps should not be rendered by Liquid (#123)
 
 ## 2.1.0 / 2020-02-05
 
