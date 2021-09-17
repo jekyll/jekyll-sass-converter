@@ -1,2 +1,5 @@
+// {% debug %}This is a comment.{% enddebug %}
+// Import using {{ site.mytheme.skin }}.
+
 $black: #999;
 a { color: $black; }
