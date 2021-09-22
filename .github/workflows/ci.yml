@@ -10,14 +10,18 @@ on:
 
 jobs:
   ci:
-    name: 'Ruby ${{ matrix.ruby_version }}'
-    runs-on: 'ubuntu-latest'
+    name: "Ruby ${{ matrix.ruby_version }} (${{ matrix.os }})"
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+        - "ubuntu-latest"
+        - "windows-latest"
         ruby_version:
-        - 2.5
-        - 2.7
+        - "2.5"
+        - "2.7"
+        - "3.0"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -31,8 +35,8 @@ jobs:
         run:  bash script/test --force-color
 
   style_check:
-    name: 'Style Check (Ruby ${{ matrix.ruby_version }})'
-    runs-on: 'ubuntu-latest'
+    name: "Style Check (Ruby ${{ matrix.ruby_version }})"
+    runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
       matrix:
