@@ -5,6 +5,10 @@
   * Source map sources should to be relative to site.source (#119)
   * Sourcemaps should not be rendered by Liquid (#123)
 
+### Development Fixes
+
+  * Migrate from AppVeyor CI to GH Actions (#125)
+
 ## 2.1.0 / 2020-02-05
 
 ### Development Fixes
