@@ -6,6 +6,11 @@ describe(Jekyll::Converters::Sass) do
   let(:site) do
     Jekyll::Site.new(site_configuration)
   end
+
+  let(:sass_converter) do
+    sass_converter_instance(site)
+  end
+
   let(:content) do
     <<~SASS
       // tl;dr some sass
@@ -15,19 +20,17 @@ describe(Jekyll::Converters::Sass) do
         font-color: fuschia
     SASS
   end
+
   let(:css_output) do
     <<~CSS
       body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
   end
+
   let(:invalid_content) do
     <<~SASS
       font-family: $font-stack;
     SASS
-  end
-
-  def compressed(content)
-    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
   end
 
   def converter(overrides = {})
@@ -65,7 +68,7 @@ describe(Jekyll::Converters::Sass) do
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
 
-    it "does not include the charset if asked not to" do
+    it "does not include the charset unless asked to" do
       overrides = { "style" => :compressed, "add_charset" => true }
       result = converter(overrides).convert(%(a\n  content: "\uF015"))
       expect(result).to eql(%(@charset "UTF-8";a{content:"\uF015"}\n))
@@ -88,11 +91,9 @@ describe(Jekyll::Converters::Sass) do
       )
     end
 
-    let(:verter) { sass_converter_instance(site) }
-
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(verter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(css_output)
     end
   end
 
@@ -106,11 +107,9 @@ describe(Jekyll::Converters::Sass) do
       )
     end
 
-    let(:verter) { sass_converter_instance(site) }
-
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(verter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(css_output)
     end
   end
 end
