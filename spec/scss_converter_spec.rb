@@ -7,6 +7,11 @@ describe(Jekyll::Converters::Scss) do
   let(:site) do
     Jekyll::Site.new(site_configuration)
   end
+
+  let(:scss_converter) do
+    scss_converter_instance(site)
+  end
+
   let(:content) do
     <<~SCSS
       $font-stack: Helvetica, sans-serif;
@@ -16,21 +21,19 @@ describe(Jekyll::Converters::Scss) do
       }
     SCSS
   end
+
   let(:css_output) do
     <<~CSS
       body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
   end
+
   let(:invalid_content) do
     <<~SCSS
       $font-stack: Helvetica
       body {
         font-family: $font-stack;
     SCSS
-  end
-
-  def compressed(content)
-    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
   end
 
   def converter(overrides = {})
@@ -72,10 +75,10 @@ describe(Jekyll::Converters::Scss) do
     context "when specifying sass dirs" do
       context "when the sass dir exists" do
         it "allow the user to specify a different sass dir" do
-          FileUtils.mkdir(source_dir("_scss"))
+          create_directory(source_dir("_scss"))
           override = { "sass_dir" => "_scss" }
           expect(converter(override).sass_configs[:load_paths]).to eql([source_dir("_scss")])
-          FileUtils.rmdir(source_dir("_scss"))
+          remove_directory(source_dir("_scss"))
         end
 
         it "not allow sass_dirs outside of site source" do
@@ -127,9 +130,9 @@ describe(Jekyll::Converters::Scss) do
     it "includes the syntax error line in the syntax error message" do
       error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
       error_message = %r!\A#{error_message}\s+on line 2!
-      expect do
-        converter.convert(invalid_content)
-      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      expect { scss_converter.convert(invalid_content) }.to(
+        raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      )
     end
 
     it "removes byte order mark from compressed SCSS" do
@@ -169,10 +172,9 @@ describe(Jekyll::Converters::Scss) do
 
   context "importing from external libraries" do
     let(:external_library) { source_dir("bower_components/jquery") }
-    let(:verter) { scss_converter_instance(site) }
     let(:test_css_file) { dest_dir("css", "main.css") }
 
-    context "unsafe mode" do
+    context "in unsafe mode" do
       let(:site) do
         make_site(
           "source" => sass_lib,
@@ -181,19 +183,16 @@ describe(Jekyll::Converters::Scss) do
           }
         )
       end
-      before(:each) do
-        FileUtils.mkdir_p(external_library) unless File.directory?(external_library)
-      end
-      after(:each) do
-        FileUtils.rmdir(external_library) if File.directory?(external_library)
-      end
+
+      before(:each) { create_directory external_library }
+      after(:each)  { remove_directory external_library }
 
       it "recognizes the new load path" do
-        expect(verter.sass_load_paths).to include(external_library)
+        expect(scss_converter.sass_load_paths).to include(external_library)
       end
 
       it "ensures the sass_dir is still in the load path" do
-        expect(verter.sass_load_paths).to include(sass_lib("_sass"))
+        expect(scss_converter.sass_load_paths).to include(sass_lib("_sass"))
       end
 
       it "brings in the grid partial" do
@@ -217,12 +216,12 @@ describe(Jekyll::Converters::Scss) do
         end
 
         it "ensures the sass_dir only occurrs once in the load path" do
-          expect(verter.sass_load_paths).to eql([external_library, sass_lib("_sass")])
+          expect(scss_converter.sass_load_paths).to eql([external_library, sass_lib("_sass")])
         end
       end
     end
 
-    context "safe mode" do
+    context "in safe mode" do
       let(:site) do
         make_site(
           "safe"   => true,
@@ -234,28 +233,22 @@ describe(Jekyll::Converters::Scss) do
       end
 
       it "ignores the new load path" do
-        expect(verter.sass_load_paths).not_to include(external_library)
+        expect(scss_converter.sass_load_paths).not_to include(external_library)
       end
 
       it "ensures the sass_dir is the entire load path" do
-        expect(verter.sass_load_paths).to eql([sass_lib("_sass")])
+        expect(scss_converter.sass_load_paths).to eql([sass_lib("_sass")])
       end
     end
   end
 
   context "importing from internal libraries" do
     let(:internal_library) { source_dir("bower_components/jquery") }
-    let(:converter) { scss_converter_instance(site) }
 
-    before(:each) do
-      FileUtils.mkdir_p(internal_library) unless File.directory?(internal_library)
-    end
+    before(:each) { create_directory internal_library }
+    after(:each)  { remove_directory internal_library }
 
-    after(:each) do
-      FileUtils.rmdir(internal_library) if File.directory?(internal_library)
-    end
-
-    context "unsafe mode" do
+    context "in unsafe mode" do
       let(:site) do
         make_site(
           "sass" => {
@@ -265,36 +258,34 @@ describe(Jekyll::Converters::Scss) do
       end
 
       it "expands globs" do
-        expect(converter.sass_load_paths).to include(internal_library)
+        expect(scss_converter.sass_load_paths).to include(internal_library)
       end
     end
 
-    context "safe mode" do
+    context "in safe mode" do
       let(:site) do
-        Jekyll::Site.new(
-          site_configuration.merge(
-            "safe" => true,
-            "sass" => {
-              "load_paths" => [
-                Dir.tmpdir,
-                "bower_components/*",
-                "../..",
-              ],
-            }
-          )
+        make_site(
+          "safe" => true,
+          "sass" => {
+            "load_paths" => [
+              Dir.tmpdir,
+              "bower_components/*",
+              "../..",
+            ],
+          }
         )
       end
 
       it "allows local load paths" do
-        expect(converter.sass_load_paths).to include(internal_library)
+        expect(scss_converter.sass_load_paths).to include(internal_library)
       end
 
       it "ignores external load paths" do
-        expect(converter.sass_load_paths).not_to include(Dir.tmpdir)
+        expect(scss_converter.sass_load_paths).not_to include(Dir.tmpdir)
       end
 
       it "does not allow traversing outside source directory" do
-        converter.sass_load_paths.each do |path|
+        scss_converter.sass_load_paths.each do |path|
           expect(path).to include(source_dir)
           expect(path).not_to include("..")
         end
@@ -305,24 +296,20 @@ describe(Jekyll::Converters::Scss) do
   context "with valid sass paths in a theme" do
     context "in unsafe mode" do
       let(:site) do
-        Jekyll::Site.new(
-          site_configuration.merge("theme" => "minima")
-        )
+        make_site("theme" => "minima")
       end
 
       it "includes the theme's sass directory" do
         expect(site.theme.sass_path).to be_truthy
-        expect(converter.sass_load_paths).to include(site.theme.sass_path)
+        expect(scss_converter.sass_load_paths).to include(site.theme.sass_path)
       end
     end
 
     context "in safe mode" do
       let(:site) do
-        Jekyll::Site.new(
-          site_configuration.merge(
-            "theme" => "minima",
-            "safe"  => true
-          )
+        make_site(
+          "theme" => "minima",
+          "safe"  => true
         )
       end
 
@@ -349,11 +336,9 @@ describe(Jekyll::Converters::Scss) do
       )
     end
 
-    let(:verter) { scss_converter_instance(site) }
-
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(verter.convert(content)).to eql(css_output)
+      expect(scss_converter.convert(content)).to eql(css_output)
     end
   end
 
@@ -367,16 +352,26 @@ describe(Jekyll::Converters::Scss) do
       )
     end
 
-    let(:verter) { scss_converter_instance(site) }
-
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(verter.convert(content)).to eql(css_output)
+      expect(scss_converter.convert(content)).to eql(css_output)
     end
   end
 
-  context "with site-source not equal to its default value of `Dir.pwd`" do
-    context "generating sourcemap" do
+  context "generating sourcemap" do
+    let(:sourcemap_file) { dest_dir("css/app.css.map") }
+    let(:sourcemap_contents) { File.binread(sourcemap_file) }
+    before { site.process }
+
+    it "outputs the sourcemap file" do
+      expect(File.exist?(sourcemap_file)).to be true
+    end
+
+    it "should not have Liquid expressions rendered" do
+      expect(sourcemap_contents).to include("{{ site.mytheme.skin }}")
+    end
+
+    context "in a site with source not equal to its default value of `Dir.pwd`" do
       let(:site) do
         make_site(
           "source" => File.expand_path("nested_source/src", __dir__)
@@ -414,20 +409,6 @@ describe(Jekyll::Converters::Scss) do
           end
         end
       end
-    end
-  end
-
-  context "generating sourcemap" do
-    let(:sourcemap_file) { dest_dir("css/app.css.map") }
-    let(:sourcemap_contents) { File.binread(sourcemap_file) }
-    before { site.process }
-
-    it "outputs the sourcemap file" do
-      expect(File.exist?(sourcemap_file)).to be true
-    end
-
-    it "should not have Liquid expressions rendered" do
-      expect(sourcemap_contents).to include("{{ site.mytheme.skin }}")
     end
   end
 end

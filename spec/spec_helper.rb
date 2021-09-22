@@ -41,6 +41,12 @@ RSpec.configure do |config|
     )
   end
 
+  # rubocop:disable Style/StringConcatenation
+  def compressed(content)
+    content.gsub(%r!\s+!, "").gsub(%r!;}!, "}") + "\n"
+  end
+  # rubocop:enable Style/StringConcatenation
+
   def make_site(config)
     Jekyll::Site.new(site_configuration.merge(config))
   end
@@ -51,5 +57,13 @@ RSpec.configure do |config|
 
   def sass_converter_instance(site)
     site.find_converter_instance(Jekyll::Converters::Sass)
+  end
+
+  def create_directory(location)
+    FileUtils.mkdir_p(location) unless File.directory?(location)
+  end
+
+  def remove_directory(location)
+    FileUtils.rmdir(location) if File.directory?(location)
   end
 end
