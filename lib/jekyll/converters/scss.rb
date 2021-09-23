@@ -210,6 +210,8 @@ module Jekyll
         end
       end
 
+      private
+
       def sass_convert(content)
         config = sass_configs
         engine = SassC::Engine.new(content.dup, config)
@@ -231,8 +233,6 @@ module Jekyll
         Jekyll.logger.warn e.formatted
         raise SyntaxError, e.to_s
       end
-
-      private
 
       # The Page instance for which this object acts as a converter.
       attr_reader :sass_page
