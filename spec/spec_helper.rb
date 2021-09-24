@@ -27,7 +27,7 @@ RSpec.configure do |config|
 
   config.include GlobalSharedContext
   config.before(:example) do
-    unless sass_implementation.nil?
+    if sass_implementation
       allow_any_instance_of(Jekyll::Converters::Scss)
         .to(receive(:sass_implementation).and_return(sass_implementation))
     end
