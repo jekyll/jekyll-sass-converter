@@ -22,7 +22,7 @@ describe(Jekyll::Converters::Scss) do
     SCSS
   end
 
-  let(:css_output_expanded) do
+  let(:expanded_css_output) do
     <<~CSS
       body {
         font-family: Helvetica, sans-serif;
@@ -31,7 +31,7 @@ describe(Jekyll::Converters::Scss) do
     CSS
   end
 
-  let(:css_output_compact) do
+  let(:compact_css_output) do
     <<~CSS
       body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
@@ -140,9 +140,9 @@ describe(Jekyll::Converters::Scss) do
     it "produces CSS" do
       case sass_implementation
       when "sass-embedded"
-        expect(converter.convert(content)).to eql(css_output_expanded)
+        expect(converter.convert(content)).to eql(expanded_css_output)
       else
-        expect(converter.convert(content)).to eql(css_output_compact)
+        expect(converter.convert(content)).to eql(compact_css_output)
       end
     end
 
@@ -371,7 +371,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output_expanded)
+      expect(scss_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 
@@ -387,7 +387,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output_expanded)
+      expect(scss_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 
