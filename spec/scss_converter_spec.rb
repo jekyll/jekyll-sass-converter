@@ -421,6 +421,14 @@ describe(Jekyll::Converters::Scss) do
 
       it "contains relevant sass sources" do
         sources = sourcemap_data["sources"]
+        case sass_implementation
+        when :"sass-embedded"
+          # dart-sass does not inlcude main.scss in sources
+          # because main.scss only contains @import statements
+          # thus there is no actual scss code to be mapped
+        else
+          expect(sources).to include("main.scss")
+        end
         expect(sources).to include("_sass/_grid.scss")
         expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
       end
