@@ -115,12 +115,12 @@ module Jekyll
       end
 
       def sass_implementation
-        implementation = jekyll_sass_configuration.fetch("implementation", :sassc)
-        ALLOWED_IMPLEMENTATIONS.include?(implementation.to_s) ? implementation.to_sym : :sassc
+        implementation = jekyll_sass_configuration["implementation"]
+        ALLOWED_IMPLEMENTATIONS.include?(implementation) ? implementation : "sassc"
       end
 
       def sass_style
-        default = sass_implementation == :sassc ? :compact : :expanded
+        default = sass_implementation == "sassc" ? :compact : :expanded
         style = jekyll_sass_configuration.fetch("style", default)
         ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : default
       end
@@ -202,10 +202,10 @@ module Jekyll
 
       def convert(content)
         case sass_implementation
-        when :"sass-embedded"
+        when "sass-embedded"
           require "sass"
           sass_embedded_convert(content)
-        when :sassc
+        when "sassc"
           sass_convert(content)
         end
       end

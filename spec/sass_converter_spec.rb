@@ -61,7 +61,7 @@ describe(Jekyll::Converters::Sass) do
   context "converting sass" do
     it "produces CSS" do
       case sass_implementation
-      when :"sass-embedded"
+      when "sass-embedded"
         expect(converter.convert(content)).to eql(css_output_expanded)
       else
         expect(converter.convert(content)).to eql(css_output_compact)
@@ -70,7 +70,7 @@ describe(Jekyll::Converters::Sass) do
 
     it "includes the syntax error line in the syntax error message" do
       case sass_implementation
-      when :"sass-embedded"
+      when "sass-embedded"
         error_message = %r!Expected newline!i
       else
         error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'

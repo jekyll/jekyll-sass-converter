@@ -123,7 +123,7 @@ describe(Jekyll::Converters::Scss) do
 
       it "defaults style to :expanded for sass-embedded or :compact for sassc" do
         case sass_implementation
-        when :"sass-embedded"
+        when "sass-embedded"
           expect(verter.sass_configs[:style]).to eql(:expanded)
         else
           expect(verter.sass_configs[:style]).to eql(:compact)
@@ -139,7 +139,7 @@ describe(Jekyll::Converters::Scss) do
   context "converting SCSS" do
     it "produces CSS" do
       case sass_implementation
-      when :"sass-embedded"
+      when "sass-embedded"
         expect(converter.convert(content)).to eql(css_output_expanded)
       else
         expect(converter.convert(content)).to eql(css_output_compact)
@@ -148,7 +148,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "includes the syntax error line in the syntax error message" do
       case sass_implementation
-      when :"sass-embedded"
+      when "sass-embedded"
         error_message = %r!expected ";"!i
       else
         error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
@@ -224,7 +224,7 @@ describe(Jekyll::Converters::Scss) do
         site.process
 
         case sass_implementation
-        when :"sass-embedded"
+        when "sass-embedded"
           expect(File.read(test_css_file)).to eql(
             "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
           )
@@ -422,7 +422,7 @@ describe(Jekyll::Converters::Scss) do
       it "contains relevant sass sources" do
         sources = sourcemap_data["sources"]
         case sass_implementation
-        when :"sass-embedded"
+        when "sass-embedded"
           # dart-sass does not inlcude main.scss in sources
           # because main.scss only contains @import statements
           # thus there is no actual scss code to be mapped

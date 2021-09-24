@@ -13,7 +13,7 @@ Jekyll.logger.log_level = :error
 module GlobalSharedContext
   extend RSpec::SharedContext
 
-  SASS_IMPLEMENTATION = ENV["SASS_IMPLEMENTATION"]&.to_sym
+  SASS_IMPLEMENTATION = ENV["SASS_IMPLEMENTATION"]
 
   let(:sass_implementation) do
     SASS_IMPLEMENTATION
