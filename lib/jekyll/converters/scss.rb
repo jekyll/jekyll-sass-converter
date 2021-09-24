@@ -189,7 +189,7 @@ module Jekyll
       def sass_embedded_config(data)
         {
           :data                => data,
-          :file                => file,
+          :file                => file_path,
           :indented_syntax     => syntax == :sass,
           :include_paths       => sass_load_paths,
           :output_style        => sass_style,
@@ -255,7 +255,7 @@ module Jekyll
       # reporting and will written into the source map file as main source.
       #
       # Returns the path of the input file or nil if #associate_page failed
-      def file
+      def file_path
         return nil if associate_page_failed?
 
         File.join(site_source_relative_from_pwd, sass_page.path)
