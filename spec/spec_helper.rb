@@ -13,11 +13,8 @@ Jekyll.logger.log_level = :error
 module GlobalSharedContext
   extend RSpec::SharedContext
 
-  SASS_IMPLEMENTATION = ENV["SASS_IMPLEMENTATION"]
-
-  let(:sass_implementation) do
-    SASS_IMPLEMENTATION
-  end
+  let(:sass_implementation) { ENV["SASS_IMPLEMENTATION"] }
+  let(:sass_embedded?) { sass_implementation == "sass-embedded" }
 end
 
 RSpec.configure do |config|

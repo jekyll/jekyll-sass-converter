@@ -60,26 +60,21 @@ describe(Jekyll::Converters::Sass) do
 
   context "converting sass" do
     it "produces CSS" do
-      case sass_implementation
-      when "sass-embedded"
-        expect(converter.convert(content)).to eql(expanded_css_output)
-      else
-        expect(converter.convert(content)).to eql(compact_css_output)
-      end
+      expected = sass_embedded? ? expanded_css_output : compact_css_output
+      expect(converter.convert(content)).to eql(expected)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      case sass_implementation
-      when "sass-embedded"
-        error_message = %r!Expected newline!i
-      else
-        error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
-        error_message = %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
-      end
+      expected = if sass_embedded?
+                   %r!Expected newline!i
+                 else
+                   error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
+                   %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
+                 end
 
       expect do
         converter.convert(invalid_content)
-      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, expected)
     end
 
     it "removes byte order mark from compressed Sass" do
