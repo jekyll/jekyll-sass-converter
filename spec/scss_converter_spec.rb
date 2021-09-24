@@ -125,7 +125,7 @@ describe(Jekyll::Converters::Scss) do
         case sass_implementation
         when :"sass-embedded"
           expect(verter.sass_configs[:style]).to eql(:expanded)
-        when :sassc
+        else
           expect(verter.sass_configs[:style]).to eql(:compact)
         end
       end
@@ -141,7 +141,7 @@ describe(Jekyll::Converters::Scss) do
       case sass_implementation
       when :"sass-embedded"
         expect(converter.convert(content)).to eql(css_output_expanded)
-      when :sassc
+      else
         expect(converter.convert(content)).to eql(css_output_compact)
       end
     end
@@ -150,7 +150,7 @@ describe(Jekyll::Converters::Scss) do
       case sass_implementation
       when :"sass-embedded"
         error_message = %r!expected ";"!i
-      when :sassc
+      else
         error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
         error_message = %r!\A#{error_message}\s+on line 2!
       end
@@ -228,7 +228,7 @@ describe(Jekyll::Converters::Scss) do
           expect(File.read(test_css_file)).to eql(
             "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
           )
-        when :sassc
+        else
           expect(File.read(test_css_file)).to eql(
             "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
           )
