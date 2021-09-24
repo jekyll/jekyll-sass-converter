@@ -371,7 +371,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(converter.convert(content)).to eql(css_output_expanded)
+      expect(scss_converter.convert(content)).to eql(css_output_expanded)
     end
   end
 
@@ -387,7 +387,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(converter.convert(content)).to eql(css_output_expanded)
+      expect(scss_converter.convert(content)).to eql(css_output_expanded)
     end
   end
 
