@@ -67,7 +67,8 @@ Available options are:
     See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
     for details.
 
-    Defaults to `expanded`.
+    Defaults to `compact` for `sassc`.
+    Defaults to `expanded` for `sass-embedded`.
 
   * **`sass_dir`**
 

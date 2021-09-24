@@ -120,8 +120,9 @@ module Jekyll
       end
 
       def sass_style
-        style = jekyll_sass_configuration.fetch("style", :expanded)
-        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : :expanded
+        default = sass_implementation == :sassc ? :compact : :expanded
+        style = jekyll_sass_configuration.fetch("style", default)
+        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : default
       end
 
       def user_sass_load_paths

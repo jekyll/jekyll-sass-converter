@@ -22,12 +22,18 @@ describe(Jekyll::Converters::Scss) do
     SCSS
   end
 
-  let(:css_output) do
+  let(:css_output_expanded) do
     <<~CSS
       body {
         font-family: Helvetica, sans-serif;
         font-color: fuschia;
       }
+    CSS
+  end
+
+  let(:css_output_compact) do
+    <<~CSS
+      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
   end
 
@@ -115,8 +121,13 @@ describe(Jekyll::Converters::Scss) do
         expect(verter.sass_configs[:style]).to eql(:compressed)
       end
 
-      it "defaults style to :expanded" do
-        expect(verter.sass_configs[:style]).to eql(:expanded)
+      it "defaults style to :expanded for sass-embedded or :compact for sassc" do
+        case sass_implementation
+        when :"sass-embedded"
+          expect(verter.sass_configs[:style]).to eql(:expanded)
+        when :sassc
+          expect(verter.sass_configs[:style]).to eql(:compact)
+        end
       end
 
       it "at least contains :syntax and :load_paths keys" do
@@ -127,7 +138,12 @@ describe(Jekyll::Converters::Scss) do
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(css_output)
+      case sass_implementation
+      when :"sass-embedded"
+        expect(converter.convert(content)).to eql(css_output_expanded)
+      when :sassc
+        expect(converter.convert(content)).to eql(css_output_compact)
+      end
     end
 
     it "includes the syntax error line in the syntax error message" do
@@ -199,9 +215,17 @@ describe(Jekyll::Converters::Scss) do
 
       it "brings in the grid partial" do
         site.process
-        expect(File.read(test_css_file)).to eql(
-          "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
-        )
+
+        case sass_implementation
+        when :"sass-embedded"
+          expect(File.read(test_css_file)).to eql(
+            "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
+          )
+        when :sassc
+          expect(File.read(test_css_file)).to eql(
+            "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
+          )
+        end
       end
 
       context "with the sass_dir specified twice" do
@@ -340,7 +364,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output)
+      expect(converter.convert(content)).to eql(css_output_expanded)
     end
   end
 
@@ -356,7 +380,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output)
+      expect(converter.convert(content)).to eql(css_output_expanded)
     end
   end
 

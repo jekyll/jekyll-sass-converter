@@ -21,12 +21,18 @@ describe(Jekyll::Converters::Sass) do
     SASS
   end
 
-  let(:css_output) do
+  let(:css_output_expanded) do
     <<~CSS
       body {
         font-family: Helvetica, sans-serif;
         font-color: fuschia;
       }
+    CSS
+  end
+
+  let(:css_output_compact) do
+    <<~CSS
+      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
   end
 
@@ -54,7 +60,12 @@ describe(Jekyll::Converters::Sass) do
 
   context "converting sass" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(css_output)
+      case sass_implementation
+      when :"sass-embedded"
+        expect(converter.convert(content)).to eql(css_output_expanded)
+      when :sassc
+        expect(converter.convert(content)).to eql(css_output_compact)
+      end
     end
 
     it "includes the syntax error line in the syntax error message" do
@@ -95,7 +106,7 @@ describe(Jekyll::Converters::Sass) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(sass_converter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(css_output_expanded)
     end
   end
 
@@ -111,7 +122,7 @@ describe(Jekyll::Converters::Sass) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(sass_converter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(css_output_expanded)
     end
   end
 end
