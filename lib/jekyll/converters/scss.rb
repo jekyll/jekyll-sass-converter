@@ -36,7 +36,6 @@ module Jekyll
       end
 
       ALLOWED_IMPLEMENTATIONS = %w(sassc sass-embedded).freeze
-
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       # Associate this Converter with the "page" object that manages input and output files for
