@@ -69,7 +69,14 @@ describe(Jekyll::Converters::Sass) do
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = %r!Expected!i
+      case sass_implementation
+      when :"sass-embedded"
+        error_message = %r!Expected newline!i
+      when :sassc
+        error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
+        error_message = %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
+      end
+
       expect do
         converter.convert(invalid_content)
       end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)

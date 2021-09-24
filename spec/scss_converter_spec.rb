@@ -147,7 +147,14 @@ describe(Jekyll::Converters::Scss) do
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = %r!Expected!i
+      case sass_implementation
+      when :"sass-embedded"
+        error_message = %r!expected ";"!i
+      when :sassc
+        error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
+        error_message = %r!\A#{error_message}\s+on line 2!
+      end
+
       expect { scss_converter.convert(invalid_content) }.to(
         raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
       )
