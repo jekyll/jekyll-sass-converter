@@ -57,6 +57,7 @@ Available options are:
 
     Sets the Sass implementation to use.
     Can be `sassc` or `sass-embedded`.
+    To use the [sass-embedded](https://rubygems.org/gems/sass-embedded) implementation, you need to add a dependency on the `sass-embedded` gem. For example, `bundle add sass-embedded`.
 
     Defaults to `sassc`.
 
