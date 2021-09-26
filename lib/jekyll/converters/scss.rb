@@ -203,7 +203,7 @@ module Jekyll
       def convert(content)
         case sass_implementation
         when "sass-embedded"
-          require "sass"
+          Jekyll::External.require_with_graceful_fail("sass")
           sass_embedded_convert(content)
         when "sassc"
           sass_convert(content)
