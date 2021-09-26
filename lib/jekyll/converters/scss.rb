@@ -229,7 +229,7 @@ module Jekyll
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         eof = sourcemap_required? ? "" : "\n"
         output.css.sub(BYTE_ORDER_MARK, replacement) + eof
-      rescue ::Sass::RenderError => e
+      rescue ::Sass::Embedded::RenderError => e
         Jekyll.logger.warn e.formatted
         raise SyntaxError, e.to_s
       end
