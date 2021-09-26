@@ -230,7 +230,7 @@ module Jekyll
         eof = sourcemap_required? ? "" : "\n"
         output.css.sub(BYTE_ORDER_MARK, replacement) + eof
       rescue ::Sass::Embedded::RenderError => e
-        Jekyll.logger.warn e.formatted
+        Jekyll.logger.error e.formatted
         raise SyntaxError, e.to_s
       end
 
