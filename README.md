@@ -42,7 +42,7 @@ for Sass implmentation. `sassc` is based on LibSass, and
 [sass-embedded](https://rubygems.org/gems/sass-embedded) is a host for the
 [Sass embedded protocol](https://github.com/sass/embedded-protocol). The host
 runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) as a subprocess
-and communicates with the dart-sass compiler via message-passing.
+and communicates with the dart-sass compiler by sending / receiving [protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard input-output channel.
 
 `sass-embedded` is currently experimental and unstable. It requires Ruby 2.6 or higher.
 
