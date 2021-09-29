@@ -48,7 +48,7 @@ and communicates with it via message-passing.
 
 To use the `sass-embedded` implementation, you need to add a dependency on the
 `sass-embedded` gem. For example, `bundle add sass-embedded`. Then, you'll be able to
-specify `sass-embedded` in your `sass` config:
+specify `sass-embedded` in your `_config.yml`:
 
   ```yml
   sass:
