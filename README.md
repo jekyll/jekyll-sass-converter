@@ -47,7 +47,7 @@ and communicates with the dart-sass compiler via message-passing.
 `sass-embedded` is currently experimental and unstable. It requires Ruby 2.6 or higher.
 
 To use the `sass-embedded` implementation, you need to add a dependency on the
-`sass-embedded` gem. For example, `bundle add sass-embedded`. Then, you'll be able to
+`sass-embedded` gem. For example, if you're using a Gemfile, run `bundle add sass-embedded`. Then, you'll be able to
 specify `sass-embedded` in your `_config.yml`:
 
   ```yml
