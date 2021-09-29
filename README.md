@@ -46,9 +46,9 @@ and communicates with it via message-passing.
 
 `sass-embedded` is currently experimental and unstable. It requires Ruby 2.6 or higher.
 
-To use the `sass-embedded`(https://rubygems.org/gems/sass-embedded) implementation, you
-need to add a dependency on the `sass-embedded` gem. For example, `bundle add sass-embedded`.
-Then, you'll be able to specify `sass-embedded` in your `sass` config:
+To use the `sass-embedded` implementation, you need to add a dependency on the
+`sass-embedded` gem. For example, `bundle add sass-embedded`. Then, you'll be able to
+specify `sass-embedded` in your `sass` config:
 
   ```yml
   sass:
