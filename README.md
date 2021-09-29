@@ -40,20 +40,23 @@ for Sass implmentation. `sassc` is based on LibSass, and
 #### Sass Embedded
 
 [sass-embedded](https://rubygems.org/gems/sass-embedded) is a host for the
-[Sass embedded protocol](https://github.com/sass/embedded-protocol). The host
-runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) as a subprocess
-and communicates with the dart-sass compiler by sending / receiving [protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard input-output channel.
+[Sass embedded protocol](https://github.com/sass/embedded-protocol).
 
-`sass-embedded` is currently experimental and unstable. It requires Ruby 2.6 or higher.
+The host runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) as a subprocess
+and communicates with the dart-sass compiler by sending / receiving
+[protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard
+input-output channel.
 
-To use the `sass-embedded` implementation, you need to add a dependency on the
-`sass-embedded` gem. For example, if you're using a Gemfile, run `bundle add sass-embedded`. Then, you'll be able to
-specify `sass-embedded` in your `_config.yml`:
+*`sass-embedded` is currently experimental, unstable and requires Ruby 2.6 or higher.*
 
-  ```yml
-  sass:
-    implementation: sass-embedded
-  ```
+To use the `sass-embedded` implementation, you need to first install the `sass-embedded` gem
+either via your `Gemfile` and Bundler, or directly. Then, you have to specify `sass-embedded`
+as the desired implementation in your `_config.yml`:
+
+```yaml
+sass:
+  implementation: sass-embedded
+```
 
 ### Source Maps
 
