@@ -10,6 +10,10 @@
   * Migrate from AppVeyor CI to GH Actions (#125)
   * Refactor specs to reduce repetition (#126)
 
+### Minor Enhancements
+
+  * Support sass-embedded as alternative implementation (#124)
+
 ## 2.1.0 / 2020-02-05
 
 ### Development Fixes
