@@ -120,6 +120,8 @@ module Jekyll
       end
 
       def sass_style
+        # `:expanded` is the default output style for newer sass implementations.
+        # For backward compatibility, `:compact` is kept as the default output style for sassc.
         default = sass_implementation == "sassc" ? :compact : :expanded
         style = jekyll_sass_configuration.fetch("style", default)
         ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : default
