@@ -22,7 +22,16 @@ describe(Jekyll::Converters::Scss) do
     SCSS
   end
 
-  let(:css_output) do
+  let(:expanded_css_output) do
+    <<~CSS
+      body {
+        font-family: Helvetica, sans-serif;
+        font-color: fuschia;
+      }
+    CSS
+  end
+
+  let(:compact_css_output) do
     <<~CSS
       body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
@@ -112,8 +121,9 @@ describe(Jekyll::Converters::Scss) do
         expect(verter.sass_configs[:style]).to eql(:compressed)
       end
 
-      it "defaults style to :compact" do
-        expect(verter.sass_configs[:style]).to eql(:compact)
+      it "defaults style to :expanded for sass-embedded or :compact for sassc" do
+        expected = sass_embedded? ? :expanded : :compact
+        expect(verter.sass_configs[:style]).to eql(expected)
       end
 
       it "at least contains :syntax and :load_paths keys" do
@@ -124,14 +134,19 @@ describe(Jekyll::Converters::Scss) do
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(css_output)
+      expected = sass_embedded? ? expanded_css_output : compact_css_output
+      expect(converter.convert(content)).to eql(expected)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule, was "{"'
-      error_message = %r!\A#{error_message}\s+on line 2!
+      expected = if sass_embedded?
+                   %r!expected ";"!i
+                 else
+                   error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule'
+                   %r!\A#{error_message}, was "{"\s+on line 2!
+                 end
       expect { scss_converter.convert(invalid_content) }.to(
-        raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+        raise_error(Jekyll::Converters::Scss::SyntaxError, expected)
       )
     end
 
@@ -197,9 +212,13 @@ describe(Jekyll::Converters::Scss) do
 
       it "brings in the grid partial" do
         site.process
-        expect(File.read(test_css_file)).to eql(
-          "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
-        )
+
+        expected = if sass_embedded?
+                     "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
+                   else
+                     "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
+                   end
+        expect(File.read(test_css_file)).to eql(expected)
       end
 
       context "with the sass_dir specified twice" do
@@ -326,7 +345,7 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :compact,
+          "style" => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -338,7 +357,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output)
+      expect(scss_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 
@@ -347,14 +366,14 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :compact,
+          "style" => :expanded,
         }
       )
     end
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(scss_converter.convert(content)).to eql(css_output)
+      expect(scss_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 
@@ -388,7 +407,10 @@ describe(Jekyll::Converters::Scss) do
 
       it "contains relevant sass sources" do
         sources = sourcemap_data["sources"]
-        expect(sources).to include("main.scss")
+        # sass-embedded (dart-sass) does not inlcude main.scss in sources
+        # because main.scss only contains @import statements
+        # thus there is no actual scss code to be mapped
+        expect(sources).to include("main.scss") unless sass_embedded?
         expect(sources).to include("_sass/_grid.scss")
         expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
       end

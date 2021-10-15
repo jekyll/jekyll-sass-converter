@@ -1,2 +1,11 @@
 #!/bin/bash
-bundle exec rspec $@
+
+set -e
+
+echo "Running rspec with sassc"
+SASS_IMPLEMENTATION=sassc bundle exec rspec $@
+
+if bundle info sass-embedded; then
+  echo "Running rspec with sass-embedded"
+  SASS_IMPLEMENTATION=sass-embedded bundle exec rspec $@
+fi

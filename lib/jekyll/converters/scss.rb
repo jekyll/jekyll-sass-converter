@@ -35,6 +35,7 @@ module Jekyll
         end
       end
 
+      ALLOWED_IMPLEMENTATIONS = %w(sassc sass-embedded).freeze
       ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
 
       # Associate this Converter with the "page" object that manages input and output files for
@@ -113,9 +114,17 @@ module Jekyll
         jekyll_sass_configuration["sass_dir"]
       end
 
+      def sass_implementation
+        implementation = jekyll_sass_configuration["implementation"]
+        ALLOWED_IMPLEMENTATIONS.include?(implementation) ? implementation : "sassc"
+      end
+
       def sass_style
-        style = jekyll_sass_configuration.fetch("style", :compact)
-        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : :compact
+        # `:expanded` is the default output style for newer sass implementations.
+        # For backward compatibility, `:compact` is kept as the default output style for sassc.
+        default = sass_implementation == "sassc" ? :compact : :expanded
+        style = jekyll_sass_configuration.fetch("style", default)
+        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : default
       end
 
       def user_sass_load_paths
@@ -179,18 +188,53 @@ module Jekyll
         )
       end
 
+      def sass_embedded_config(data)
+        {
+          :data                => data,
+          :file                => file_path,
+          :indented_syntax     => syntax == :sass,
+          :include_paths       => sass_load_paths,
+          :output_style        => sass_style,
+          :source_map          => sourcemap_required?,
+          :out_file            => output_path,
+          :omit_source_map_url => !sourcemap_required?,
+          :source_map_contents => true,
+        }
+      end
+
       def convert(content)
+        case sass_implementation
+        when "sass-embedded"
+          Jekyll::External.require_with_graceful_fail("sass-embedded")
+          sass_embedded_convert(content)
+        when "sassc"
+          sass_convert(content)
+        end
+      end
+
+      private
+
+      def sass_convert(content)
         config = sass_configs
         engine = SassC::Engine.new(content.dup, config)
         output = engine.render
-        generate_source_map(engine) if sourcemap_required?
+        sass_generate_source_map(engine) if sourcemap_required?
         replacement = add_charset? ? '@charset "UTF-8";' : ""
         output.sub(BYTE_ORDER_MARK, replacement)
       rescue SassC::SyntaxError => e
         raise SyntaxError, e.to_s
       end
 
-      private
+      def sass_embedded_convert(content)
+        output = ::Sass.render(**sass_embedded_config(content))
+        sass_embedded_generate_source_map(output.map) if sourcemap_required?
+        replacement = add_charset? ? '@charset "UTF-8";' : ""
+        eof = sourcemap_required? ? "" : "\n"
+        output.css.sub(BYTE_ORDER_MARK, replacement) + eof
+      rescue ::Sass::Embedded::RenderError => e
+        Jekyll.logger.error e.formatted
+        raise SyntaxError, e.to_s
+      end
 
       # The Page instance for which this object acts as a converter.
       attr_reader :sass_page
@@ -207,6 +251,16 @@ module Jekyll
         return "stdin" if associate_page_failed?
 
         File.join(site_source_relative_from_pwd, sass_page.name)
+      end
+
+      # The path of the input scss (or sass) file. This information will be used for error
+      # reporting and will written into the source map file as main source.
+      #
+      # Returns the path of the input file or nil if #associate_page failed
+      def file_path
+        return nil if associate_page_failed?
+
+        File.join(site_source_relative_from_pwd, sass_page.path)
       end
 
       # The value of the `line_comments` option.
@@ -266,13 +320,20 @@ module Jekyll
       # Reads the source-map from the engine and adds it to the source-map-page.
       #
       # @param [::SassC::Engine] engine The sass Compiler engine.
-      def generate_source_map(engine)
+      def sass_generate_source_map(engine)
         return if associate_page_failed?
 
         source_map_page.source_map(engine.source_map)
         site.pages << source_map_page
       rescue ::SassC::NotRenderedError => e
         Jekyll.logger.warn "Could not generate source map #{e.message} => #{e.cause}"
+      end
+
+      def sass_embedded_generate_source_map(source_map)
+        return if associate_page_failed?
+
+        source_map_page.source_map(source_map)
+        site.pages << source_map_page
       end
 
       def site

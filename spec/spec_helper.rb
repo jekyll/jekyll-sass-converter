@@ -9,10 +9,26 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "jekyll-sass-converter"
 
 Jekyll.logger.log_level = :error
+
+module GlobalSharedContext
+  extend RSpec::SharedContext
+
+  let(:sass_implementation) { ENV["SASS_IMPLEMENTATION"] }
+  let(:sass_embedded?) { sass_implementation == "sass-embedded" }
+end
+
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
   config.order = "random"
+
+  config.include GlobalSharedContext
+  config.before(:example) do
+    if sass_implementation
+      allow_any_instance_of(Jekyll::Converters::Scss)
+        .to(receive(:sass_implementation).and_return(sass_implementation))
+    end
+  end
 
   SOURCE_DIR   = File.expand_path("source", __dir__)
   DEST_DIR     = File.expand_path("dest",   __dir__)

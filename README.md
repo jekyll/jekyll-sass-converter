@@ -29,6 +29,35 @@ Jekyll Sass Converter comes bundled with Jekyll 2.0.0 and greater. For more
 information about usage, visit the [Jekyll Assets Documentation
 page](https://jekyllrb.com/docs/assets/).
 
+### Sass Implementations
+
+#### SassC
+
+By default, Jekyll Sass Converter uses [sassc](https://rubygems.org/gems/sassc)
+for Sass implmentation. `sassc` is based on LibSass, and
+[LibSass is deprecated](https://sass-lang.com/blog/libsass-is-deprecated).
+
+#### Sass Embedded
+
+[sass-embedded](https://rubygems.org/gems/sass-embedded) is a host for the
+[Sass embedded protocol](https://github.com/sass/embedded-protocol).
+
+The host runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) as a subprocess
+and communicates with the dart-sass compiler by sending / receiving
+[protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard
+input-output channel.
+
+*`sass-embedded` is currently experimental, unstable and requires Ruby 2.6 or higher.*
+
+To use the `sass-embedded` implementation, you need to first install the `sass-embedded` gem
+either via your `Gemfile` and Bundler, or directly. Then, you have to specify `sass-embedded`
+as the desired implementation in your `_config.yml`:
+
+```yaml
+sass:
+  implementation: sass-embedded
+```
+
 ### Source Maps
 
 Starting with `v2.0`, the Converter will by default generate a _source map_ file along with
@@ -53,6 +82,13 @@ Configuration options are specified in the `_config.yml` file in the following w
 
 Available options are:
 
+  * **`implementation`**
+
+    Sets the Sass implementation to use.
+    Can be `sassc` or `sass-embedded`.
+
+    Defaults to `sassc`.
+
   * **`style`**
 
     Sets the style of the CSS-output.
@@ -60,7 +96,8 @@ Available options are:
     See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
     for details.
 
-    Defaults to `compact`.
+    Defaults to `compact` for `sassc`.
+    Defaults to `expanded` for `sass-embedded`.
 
   * **`sass_dir`**
 

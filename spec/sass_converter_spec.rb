@@ -21,7 +21,16 @@ describe(Jekyll::Converters::Sass) do
     SASS
   end
 
-  let(:css_output) do
+  let(:expanded_css_output) do
+    <<~CSS
+      body {
+        font-family: Helvetica, sans-serif;
+        font-color: fuschia;
+      }
+    CSS
+  end
+
+  let(:compact_css_output) do
     <<~CSS
       body { font-family: Helvetica, sans-serif; font-color: fuschia; }
     CSS
@@ -51,15 +60,21 @@ describe(Jekyll::Converters::Sass) do
 
   context "converting sass" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(css_output)
+      expected = sass_embedded? ? expanded_css_output : compact_css_output
+      expect(converter.convert(content)).to eql(expected)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
-      error_message = %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
+      expected = if sass_embedded?
+                   %r!Expected newline!i
+                 else
+                   error_message = 'Error: Invalid CSS after "f": expected 1 selector or at-rule.'
+                   %r!\A#{error_message} was "font-family: \$font-"\s+on line 1:1 of stdin!
+                 end
+
       expect do
         converter.convert(invalid_content)
-      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, error_message)
+      end.to raise_error(Jekyll::Converters::Scss::SyntaxError, expected)
     end
 
     it "removes byte order mark from compressed Sass" do
@@ -81,7 +96,7 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :compact,
+          "style" => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -93,7 +108,7 @@ describe(Jekyll::Converters::Sass) do
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(sass_converter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 
@@ -102,14 +117,14 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :compact,
+          "style" => :expanded,
         }
       )
     end
 
     it "produces CSS without raising errors" do
       expect { site.process }.not_to raise_error
-      expect(sass_converter.convert(content)).to eql(css_output)
+      expect(sass_converter.convert(content)).to eql(expanded_css_output)
     end
   end
 end
