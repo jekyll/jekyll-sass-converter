@@ -177,20 +177,6 @@ module Jekyll
         )
       end
 
-      def sass_embedded_config(data)
-        {
-          :data                => data,
-          :file                => file_path,
-          :indented_syntax     => syntax == :sass,
-          :include_paths       => sass_load_paths,
-          :output_style        => sass_style,
-          :source_map          => sourcemap_required?,
-          :out_file            => output_path,
-          :omit_source_map_url => !sourcemap_required?,
-          :source_map_contents => true,
-        }
-      end
-
       def convert(content)
         case sass_implementation
         when "sass-embedded"
@@ -214,15 +200,27 @@ module Jekyll
         raise SyntaxError, e.to_s
       end
 
+      def sass_embedded_config
+        {
+          :load_paths                 => sass_load_paths,
+          :source_map                 => sourcemap_required?,
+          :source_map_include_sources => true,
+          :style                      => sass_style,
+          :syntax                     => syntax == :sass ? :indented : syntax,
+          :url                        => url,
+        }
+      end
+
       def sass_embedded_convert(content)
-        output = ::Sass.render(**sass_embedded_config(content))
-        sass_embedded_generate_source_map(output.map) if sourcemap_required?
+        output = ::Sass.compile_string(content, **sass_embedded_config)
+        sass_embedded_generate_source_map(output.source_map) if sourcemap_required?
         replacement = add_charset? ? '@charset "UTF-8";' : ""
-        eof = sourcemap_required? ? "" : "\n"
+        source_mapping_url = Addressable::URI.encode(File.basename(source_map_file))
+        eof = sourcemap_required? ? "\n\n/*# sourceMappingURL=#{source_mapping_url} */" : "\n"
         output.css.sub(BYTE_ORDER_MARK, replacement) + eof
-      rescue ::Sass::Embedded::RenderError => e
-        Jekyll.logger.error e.formatted
-        raise SyntaxError, e.to_s
+      rescue ::Sass::CompileError => e
+        Jekyll.logger.error e.full_message
+        raise SyntaxError, e.message
       end
 
       # The Page instance for which this object acts as a converter.
@@ -242,14 +240,11 @@ module Jekyll
         File.join(site_source_relative_from_pwd, sass_page.name)
       end
 
-      # The path of the input scss (or sass) file. This information will be used for error
-      # reporting and will written into the source map file as main source.
-      #
-      # Returns the path of the input file or nil if #associate_page failed
-      def file_path
-        return nil if associate_page_failed?
+      # The URL of the input scss (or sass) file. This information will be used for error reporting.
+      def url
+        return if associate_page_failed?
 
-        File.join(site_source_relative_from_pwd, sass_page.path)
+        file_path_to_uri(File.join(site_source, sass_page.relative_path))
       end
 
       # The value of the `line_comments` option.
@@ -318,10 +313,17 @@ module Jekyll
         Jekyll.logger.warn "Could not generate source map #{e.message} => #{e.cause}"
       end
 
+      # Reads the source-map and adds it to the source-map-page.
       def sass_embedded_generate_source_map(source_map)
         return if associate_page_failed?
 
-        source_map_page.source_map(source_map)
+        map_data = JSON.parse(source_map)
+        map_data["file"] = Addressable::URI.encode(File.basename(output_path))
+        map_data["sources"].map! do |s|
+          s.start_with?("file:") ? Addressable::URI.parse(s).route_from(site_source_url) : s
+        end
+
+        source_map_page.source_map(JSON.generate(map_data))
         site.pages << source_map_page
       end
 
@@ -336,6 +338,14 @@ module Jekyll
       def site_source_relative_from_pwd
         @site_source_relative_from_pwd ||=
           Pathname.new(site_source).relative_path_from(Pathname.new(Dir.pwd)).to_s
+      end
+
+      def site_source_url
+        @site_source_url ||= file_path_to_uri("#{site_source}/")
+      end
+
+      def file_path_to_uri(path)
+        Addressable::URI.encode("file://#{path.start_with?("/") ? "" : "/"}#{path}")
       end
     end
   end
