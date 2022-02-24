@@ -337,11 +337,7 @@ module Jekyll
       end
 
       def site
-        if associate_page_failed?
-          Jekyll.sites.last
-        else
-          sass_page.site
-        end
+        associate_page_failed? ? Jekyll.sites.last : sass_page.site
       end
 
       def site_source
@@ -350,9 +346,7 @@ module Jekyll
 
       def site_source_relative_from_pwd
         @site_source_relative_from_pwd ||=
-          Pathname.new(site_source)
-            .relative_path_from(Pathname.new(Dir.pwd))
-            .to_s
+          Pathname.new(site_source).relative_path_from(Pathname.new(Dir.pwd)).to_s
       end
     end
   end
