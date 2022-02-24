@@ -141,10 +141,8 @@ module Jekyll
       def sass_load_paths
         paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
 
-        if safe?
-          # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
-          paths.map! { |path| Jekyll.sanitized_path(site_source, path) }
-        end
+        # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
+        paths.map! { |path| Jekyll.sanitized_path(site_source, path) } if safe?
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(site_source) do
