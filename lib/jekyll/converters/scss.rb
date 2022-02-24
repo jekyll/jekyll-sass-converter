@@ -92,16 +92,11 @@ module Jekyll
       end
 
       def sass_build_configuration_options(overrides)
-        if safe?
-          overrides
-        else
-          Jekyll::Utils.symbolize_hash_keys(
-            Jekyll::Utils.deep_merge_hashes(
-              jekyll_sass_configuration,
-              overrides
-            )
-          )
-        end
+        return overrides if safe?
+
+        Jekyll::Utils.symbolize_hash_keys(
+          Jekyll::Utils.deep_merge_hashes(jekyll_sass_configuration, overrides)
+        )
       end
 
       def syntax
