@@ -92,16 +92,11 @@ module Jekyll
       end
 
       def sass_build_configuration_options(overrides)
-        if safe?
-          overrides
-        else
-          Jekyll::Utils.symbolize_hash_keys(
-            Jekyll::Utils.deep_merge_hashes(
-              jekyll_sass_configuration,
-              overrides
-            )
-          )
-        end
+        return overrides if safe?
+
+        Jekyll::Utils.symbolize_hash_keys(
+          Jekyll::Utils.deep_merge_hashes(jekyll_sass_configuration, overrides)
+        )
       end
 
       def syntax
@@ -141,22 +136,16 @@ module Jekyll
       def sass_load_paths
         paths = user_sass_load_paths + [sass_dir_relative_to_site_source]
 
-        if safe?
-          # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
-          paths.map! { |path| Jekyll.sanitized_path(site_source, path) }
-        end
+        # Sanitize paths to prevent any attack vectors (.e.g. `/**/*`)
+        paths.map! { |path| Jekyll.sanitized_path(site_source, path) } if safe?
 
         # Expand file globs (e.g. `node_modules/*/node_modules` )
         Dir.chdir(site_source) do
           paths = paths.flat_map { |path| Dir.glob(path) }
 
           paths.map! do |path|
-            if safe?
-              # Sanitize again in case globbing was able to do something crazy.
-              Jekyll.sanitized_path(site_source, path)
-            else
-              File.expand_path(path)
-            end
+            # Sanitize again in case globbing was able to do something crazy.
+            safe? ? Jekyll.sanitized_path(site_source, path) : File.expand_path(path)
           end
         end
 
@@ -337,11 +326,7 @@ module Jekyll
       end
 
       def site
-        if associate_page_failed?
-          Jekyll.sites.last
-        else
-          sass_page.site
-        end
+        associate_page_failed? ? Jekyll.sites.last : sass_page.site
       end
 
       def site_source
@@ -350,9 +335,7 @@ module Jekyll
 
       def site_source_relative_from_pwd
         @site_source_relative_from_pwd ||=
-          Pathname.new(site_source)
-            .relative_path_from(Pathname.new(Dir.pwd))
-            .to_s
+          Pathname.new(site_source).relative_path_from(Pathname.new(Dir.pwd)).to_s
       end
     end
   end
