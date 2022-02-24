@@ -149,12 +149,8 @@ module Jekyll
           paths = paths.flat_map { |path| Dir.glob(path) }
 
           paths.map! do |path|
-            if safe?
-              # Sanitize again in case globbing was able to do something crazy.
-              Jekyll.sanitized_path(site_source, path)
-            else
-              File.expand_path(path)
-            end
+            # Sanitize again in case globbing was able to do something crazy.
+            safe? ? Jekyll.sanitized_path(site_source, path) : File.expand_path(path)
           end
         end
 
