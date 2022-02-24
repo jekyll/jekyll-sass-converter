@@ -9,6 +9,7 @@
 
   * Migrate from AppVeyor CI to GH Actions (#125)
   * Refactor specs to reduce repetition (#126)
+  * Reduce overall class size (#132)
 
 ### Minor Enhancements
 
