@@ -207,7 +207,7 @@ module Jekyll
           :source_map_include_sources => true,
           :style                      => sass_style,
           :syntax                     => syntax == :sass ? :indented : syntax,
-          :url                        => url,
+          :url                        => sass_file_url,
         }
       end
 
@@ -241,10 +241,10 @@ module Jekyll
       end
 
       # The URL of the input scss (or sass) file. This information will be used for error reporting.
-      def url
+      def sass_file_url
         return if associate_page_failed?
 
-        file_path_to_uri(File.join(site_source, sass_page.relative_path))
+        file_url_from_path(File.join(site_source, sass_page.relative_path))
       end
 
       # The value of the `line_comments` option.
@@ -341,10 +341,10 @@ module Jekyll
       end
 
       def site_source_url
-        @site_source_url ||= file_path_to_uri("#{site_source}/")
+        @site_source_url ||= file_url_from_path("#{site_source}/")
       end
 
-      def file_path_to_uri(path)
+      def file_url_from_path(path)
         Addressable::URI.encode("file://#{path.start_with?("/") ? "" : "/"}#{path}")
       end
     end
