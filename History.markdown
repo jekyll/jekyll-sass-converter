@@ -11,6 +11,7 @@
   * Refactor specs to reduce repetition (#126)
   * Reduce overall class size (#132)
   * Use new sass-embedded api (#131)
+  * Add workflow to release gem via GH Actions (#134)
 
 ### Minor Enhancements
 
