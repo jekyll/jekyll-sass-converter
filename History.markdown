@@ -19,6 +19,7 @@
 ### Documentation
 
   * Update CI status badge (#127)
+  * Update `sass-embedded` info in `README.md` (#133)
 
 ## 2.1.0 / 2020-02-05
 
