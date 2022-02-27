@@ -47,8 +47,21 @@ and communicates with the dart-sass compiler by sending / receiving
 input-output channel.
 
 To use the `sass-embedded` implementation, you need to first install the `sass-embedded` gem
-either via your `Gemfile` and Bundler, or directly. Then, you have to specify `sass-embedded`
-as the desired implementation in your `_config.yml`:
+either via your `Gemfile` and Bundler, or directly.
+
+Add this line to your application's Gemfile:
+
+    gem 'sass-embedded', '~> 1.0'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install sass-embedded
+
+Then, you have to specify `sass-embedded` as the desired implementation in your `_config.yml`:
 
 ```yaml
 sass:
