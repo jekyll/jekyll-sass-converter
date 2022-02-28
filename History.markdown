@@ -1,5 +1,9 @@
 ## HEAD
 
+### Minor Enhancements
+
+  * Support sass-embedded as alternative implementation (#124)
+
 ### Bug Fixes
 
   * Source map sources should to be relative to site.source (#119)
@@ -12,10 +16,6 @@
   * Reduce overall class size (#132)
   * Use new sass-embedded api (#131)
   * Add workflow to release gem via GH Actions (#134)
-
-### Minor Enhancements
-
-  * Support sass-embedded as alternative implementation (#124)
 
 ### Documentation
 
