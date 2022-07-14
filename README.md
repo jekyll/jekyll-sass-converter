@@ -30,11 +30,9 @@ page](https://jekyllrb.com/docs/assets/).
 
 ### Sass Implementations
 
-#### SassC
+Starting with `v3.0`, Jekyll Sass Converter uses `sass-embedded` for Sass implmentation.
 
-By default, Jekyll Sass Converter uses [sassc](https://rubygems.org/gems/sassc)
-for Sass implmentation. `sassc` is based on LibSass, and
-[LibSass is deprecated](https://sass-lang.com/blog/libsass-is-deprecated).
+Please see [migrate from 2.x to 3.x](#migrate-from-2x-to-3x) for more information.
 
 #### Sass Embedded
 
@@ -45,28 +43,6 @@ The host runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) a
 and communicates with the dart-sass compiler by sending / receiving
 [protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard
 input-output channel.
-
-To use the `sass-embedded` implementation, you need to first install the `sass-embedded` gem
-either via your `Gemfile` and Bundler, or directly.
-
-Add this line to your application's Gemfile:
-
-    gem 'sass-embedded', '~> 1.0'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install sass-embedded
-
-Then, you have to specify `sass-embedded` as the desired implementation in your `_config.yml`:
-
-```yaml
-sass:
-  implementation: sass-embedded
-```
 
 ### Source Maps
 
@@ -92,22 +68,14 @@ Configuration options are specified in the `_config.yml` file in the following w
 
 Available options are:
 
-  * **`implementation`**
-
-    Sets the Sass implementation to use.
-    Can be `sassc` or `sass-embedded`.
-
-    Defaults to `sassc`.
-
   * **`style`**
 
     Sets the style of the CSS-output.
-    Can be `nested`, `compact`, `compressed`, or `expanded`.
+    Can be `compressed` or `expanded`.
     See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
     for details.
 
-    Defaults to `compact` for `sassc`.
-    Defaults to `expanded` for `sass-embedded`.
+    Defaults to `expanded`.
 
   * **`sass_dir`**
 
@@ -121,14 +89,6 @@ Available options are:
 
     Defaults to `[]`
 
-  * **`line_comments`**
-
-    When set to _true_, the line number and filename of the source is included in the compiled
-    CSS-file. Useful for debugging when the _source map_ is not available, but might
-    considerably increase the size of the generated CSS files.
-
-    Defaults to `false`.
-
   * **`sourcemap`**
 
     Controls when source maps shall be generated.
@@ -141,6 +101,55 @@ Available options are:
 
     Defaults to `always`.
 
+## Migrate from 2.x to 3.x
+
+Classic GitHub Pages experience still uses [1.x version of jekyll-sass-converter](https://pages.github.com/versions/).
+
+To use latest Jekyll and Jekyll Sass Converter on GitHub Pages,
+[you can now deploy to a GitHub Pages site using GitHub Actions](https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/).
+
+### Dropped `implmentation` Option
+
+In `v3.0.0`, `sass-embedded` gem becomes the default Sass implmentation, and `sassc` gem
+is no longer supported. As part of this change, support for Ruby 2.5 is dropped.
+
+### Dropped `add_charset` Option
+
+The Converter will no longer emit `@charset "UTF-8";` or a U+FEFF (byte-order marker) for
+`sassify` and `scssify` Jekyll filters so that this option is no longer needed.
+
+### Dropped `line_comments` Option
+
+`sass-embedded` does not support `line_comments` option.
+
+### Dropped support of importing files with non-standard extension names
+
+`sass-embedded` only allows importing files that have extension names of `.sass`, `.scss`
+or `.css`. Scss syntax in files with `.css` extension name will result in a syntax error.
+
+### Dropped support of importing files relative to site source
+
+In `v2.x`, the Converter allowed imports using paths relative to site source directory,
+even if the site source directory is not in Sass `load_paths`. This is a side effect of a
+bug in the Converter, which will remain as is in `v2.x` due to its usage in the wild.
+
+In `v3.x`, imports using paths relative to site source directory will not work out of box.
+To allow these imports, `.` (meaning current directory, or site source directory) need to
+be explicitly added to `load_paths` option.
+
+### Dropped support of importing files with the same filename as their parent file
+
+In `v2.x`, the Converter allowed imports of files with the same filename as their parent
+file from `sass_dir` or `load_paths`. This is a side effect of a bug in the Converter,
+which will remain as is in `v2.x` due to its usage in the wild.
+
+In `v3.x`, imports using the same filename of parent file will create a circular import.
+To fix these imports, rename either of the files, or use complete relative path from the
+parent file.
+
+### Behavioral Differences in Sass Implementation
+
+Please see https://github.com/sass/dart-sass#behavioral-differences-from-ruby-sass.
 
 ## Contributing
 
