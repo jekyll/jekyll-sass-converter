@@ -411,8 +411,8 @@ describe(Jekyll::Converters::Scss) do
         # because main.scss only contains @import statements
         # thus there is no actual scss code to be mapped
         expect(sources).to include("main.scss") unless sass_embedded?
-        expect(sources).to include("_sass/_grid.scss")
-        expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
+        expect(sources).to include("../_sass/_grid.scss")
+        expect(sources).to_not include("../_sass/_color.scss") # not imported into "main.scss"
       end
 
       it "does not leak directory structure outside of `site.source`" do

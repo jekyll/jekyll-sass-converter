@@ -237,14 +237,13 @@ module Jekyll
       def filename
         return "stdin" if associate_page_failed?
 
-        File.join(site_source_relative_from_pwd, sass_page.name)
+        sass_page_absolute_path
       end
 
       # The URL of the input scss (or sass) file. This information will be used for error reporting.
       def sass_file_url
-        return if associate_page_failed?
-
-        file_url_from_path(File.join(site_source, sass_page.relative_path))
+        @sass_file_url ||=
+          (file_url_from_path(sass_page_absolute_path) unless associate_page_failed?)
       end
 
       # The value of the `line_comments` option.
@@ -282,7 +281,7 @@ module Jekyll
       def output_path
         return "stdin.css" if associate_page_failed?
 
-        File.join(site_source_relative_from_pwd, sass_page.basename + ".css")
+        File.join(sass_page_dirname, sass_page.basename + ".css")
       end
 
       # The name of the generated source map file. This information will be written into the
@@ -292,7 +291,7 @@ module Jekyll
       def source_map_file
         return "" if associate_page_failed?
 
-        File.join(site_source_relative_from_pwd, sass_page.basename + ".css.map")
+        File.join(sass_page_dirname, sass_page.basename + ".css.map")
       end
 
       def source_map_page
@@ -320,7 +319,7 @@ module Jekyll
         map_data = JSON.parse(source_map)
         map_data["file"] = Addressable::URI.encode(File.basename(output_path))
         map_data["sources"].map! do |s|
-          s.start_with?("file:") ? Addressable::URI.parse(s).route_from(site_source_url) : s
+          s.start_with?("file:") ? Addressable::URI.parse(s).route_from(sass_file_url) : s
         end
 
         source_map_page.source_map(JSON.generate(map_data))
@@ -335,13 +334,12 @@ module Jekyll
         site.source
       end
 
-      def site_source_relative_from_pwd
-        @site_source_relative_from_pwd ||=
-          Pathname.new(site_source).relative_path_from(Pathname.new(Dir.pwd)).to_s
+      def sass_page_absolute_path
+        @sass_page_absolute_path ||= File.join(site_source, sass_page.relative_path)
       end
 
-      def site_source_url
-        @site_source_url ||= file_url_from_path("#{site_source}/")
+      def sass_page_dirname
+        @sass_page_dirname ||= File.dirname(sass_page_absolute_path)
       end
 
       def file_url_from_path(path)
