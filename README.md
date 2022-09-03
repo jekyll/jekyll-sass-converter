@@ -68,6 +68,17 @@ sass:
   implementation: sass-embedded
 ```
 
+##### Use Sass Embedded on GitHub Pages
+
+Classic GitHub Pages experience does not support `sass-embedded`, as it still uses
+[old versions of jekyll and jekyll-sass-converter](https://pages.github.com/versions/).
+However, you can now
+[deploy to a GitHub Pages site using GitHub Actions](https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/).
+
+To use GitHub Actions, set the build and deployment source of GitHub Pages to `GitHub Actions`
+in your repository settings. Then, create your workflow with
+[jekyll starter workflow](https://github.com/actions/starter-workflows/blob/main/pages/jekyll.yml).
+
 ### Source Maps
 
 Starting with `v2.0`, the Converter will by default generate a _source map_ file along with
