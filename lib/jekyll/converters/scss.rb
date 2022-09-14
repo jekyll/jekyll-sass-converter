@@ -7,9 +7,8 @@ require "json"
 require "addressable/uri"
 require "sass-embedded"
 
-# jekyll
-require "jekyll/utils"
-require "jekyll/source_map_page"
+# internal
+require_relative "../source_map_page"
 
 module Jekyll
   module Converters
@@ -90,7 +89,7 @@ module Jekyll
         @jekyll_sass_configuration ||= begin
           options = @config["sass"] || {}
           unless options["style"].nil?
-            options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
+            options["style"] = options["style"].to_s.delete_prefix(":").to_sym
           end
           options
         end
@@ -157,14 +156,18 @@ module Jekyll
 
       def convert(content)
         output = ::Sass.compile_string(content, **sass_configs)
+        result = +"#{output.css}\n"
 
         if sourcemap_required?
           source_map = process_source_map(output.source_map)
           generate_source_map_page(source_map)
-          "#{output.css}\n\n/*# sourceMappingURL=#{source_mapping_url(source_map)} */"
-        else
-          "#{output.css}\n"
+
+          if (sm_url = source_mapping_url)
+            result << "\n/*# sourceMappingURL=#{sm_url} */"
+          end
         end
+
+        result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
         raise SyntaxError, e.message
@@ -183,7 +186,7 @@ module Jekyll
       def sass_file_url
         return if associate_page_failed?
 
-        file_url_from_path(File.join(site_source, sass_page.relative_path))
+        file_url_from_path(Jekyll.sanitized_path(site_source, sass_page.relative_path))
       end
 
       # The value of the `sourcemap` option chosen by the user.
@@ -216,7 +219,7 @@ module Jekyll
         if associate_page_failed?
           site_source
         else
-          File.join(site_source, File.dirname(sass_page.relative_path))
+          Jekyll.sanitized_path(site_source, File.dirname(sass_page.relative_path))
         end
       end
 
@@ -244,7 +247,7 @@ module Jekyll
       end
 
       # Returns a source mapping url for given source-map.
-      def source_mapping_url(_source_map)
+      def source_mapping_url
         return if associate_page_failed?
 
         Addressable::URI.encode(sass_page.basename + ".css.map")
