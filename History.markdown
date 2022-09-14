@@ -1,3 +1,9 @@
+## HEAD
+
+### Major Enhancements
+
+  * Drop support for sassc (#140)
+
 ## 2.2.0 / 2022-02-28
 
 ### Minor Enhancements
