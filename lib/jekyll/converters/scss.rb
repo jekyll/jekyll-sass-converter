@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
-require "sassc"
-require "jekyll/utils"
-require "jekyll/source_map_page"
+# stdlib
+require "json"
+
+# 3rd party
+require "addressable/uri"
+require "sass-embedded"
+
+# internal
+require_relative "../source_map_page"
 
 module Jekyll
   module Converters
     class Scss < Converter
-      BYTE_ORDER_MARK = %r!^\xEF\xBB\xBF!.freeze
       EXTENSION_PATTERN = %r!^\.scss$!i.freeze
 
       SyntaxError = Class.new(ArgumentError)
@@ -35,8 +40,7 @@ module Jekyll
         end
       end
 
-      ALLOWED_IMPLEMENTATIONS = %w(sassc sass-embedded).freeze
-      ALLOWED_STYLES = %w(nested expanded compact compressed).freeze
+      ALLOWED_STYLES = %w(expanded compressed).freeze
 
       # Associate this Converter with the "page" object that manages input and output files for
       # this converter.
@@ -85,18 +89,10 @@ module Jekyll
         @jekyll_sass_configuration ||= begin
           options = @config["sass"] || {}
           unless options["style"].nil?
-            options["style"] = options["style"].to_s.gsub(%r!\A:!, "").to_sym
+            options["style"] = options["style"].to_s.delete_prefix(":").to_sym
           end
           options
         end
-      end
-
-      def sass_build_configuration_options(overrides)
-        return overrides if safe?
-
-        Jekyll::Utils.symbolize_hash_keys(
-          Jekyll::Utils.deep_merge_hashes(jekyll_sass_configuration, overrides)
-        )
       end
 
       def syntax
@@ -109,17 +105,9 @@ module Jekyll
         jekyll_sass_configuration["sass_dir"]
       end
 
-      def sass_implementation
-        implementation = jekyll_sass_configuration["implementation"]
-        ALLOWED_IMPLEMENTATIONS.include?(implementation) ? implementation : "sassc"
-      end
-
       def sass_style
-        # `:expanded` is the default output style for newer sass implementations.
-        # For backward compatibility, `:compact` is kept as the default output style for sassc.
-        default = sass_implementation == "sassc" ? :compact : :expanded
-        style = jekyll_sass_configuration.fetch("style", default)
-        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : default
+        style = jekyll_sass_configuration["style"]
+        ALLOWED_STYLES.include?(style.to_s) ? style.to_sym : :expanded
       end
 
       def user_sass_load_paths
@@ -127,9 +115,8 @@ module Jekyll
       end
 
       def sass_dir_relative_to_site_source
-        @sass_dir_relative_to_site_source ||= begin
+        @sass_dir_relative_to_site_source ||=
           Jekyll.sanitized_path(site_source, sass_dir).sub(site.source + "/", "")
-        end
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -155,73 +142,38 @@ module Jekyll
       end
       # rubocop:enable Metrics/AbcSize
 
-      def allow_caching?
-        !safe?
-      end
-
-      def add_charset?
-        !!jekyll_sass_configuration["add_charset"]
-      end
-
       def sass_configs
-        sass_build_configuration_options(
-          :style                => sass_style,
-          :syntax               => syntax,
-          :filename             => filename,
-          :output_path          => output_path,
-          :source_map_file      => source_map_file,
-          :load_paths           => sass_load_paths,
-          :omit_source_map_url  => !sourcemap_required?,
-          :source_map_contents  => true,
-          :line_comments_option => line_comments_option
-        )
-      end
-
-      def convert(content)
-        case sass_implementation
-        when "sass-embedded"
-          Jekyll::External.require_with_graceful_fail("sass-embedded")
-          sass_embedded_convert(content)
-        when "sassc"
-          sass_convert(content)
-        end
-      end
-
-      private
-
-      def sass_convert(content)
-        config = sass_configs
-        engine = SassC::Engine.new(content.dup, config)
-        output = engine.render
-        sass_generate_source_map(engine) if sourcemap_required?
-        replacement = add_charset? ? '@charset "UTF-8";' : ""
-        output.sub(BYTE_ORDER_MARK, replacement)
-      rescue SassC::SyntaxError => e
-        raise SyntaxError, e.to_s
-      end
-
-      def sass_embedded_config
         {
           :load_paths                 => sass_load_paths,
+          :charset                    => !associate_page_failed?,
           :source_map                 => sourcemap_required?,
           :source_map_include_sources => true,
           :style                      => sass_style,
-          :syntax                     => syntax == :sass ? :indented : syntax,
+          :syntax                     => syntax,
           :url                        => sass_file_url,
         }
       end
 
-      def sass_embedded_convert(content)
-        output = ::Sass.compile_string(content, **sass_embedded_config)
-        sass_embedded_generate_source_map(output.source_map) if sourcemap_required?
-        replacement = add_charset? ? '@charset "UTF-8";' : ""
-        source_mapping_url = Addressable::URI.encode(File.basename(source_map_file))
-        eof = sourcemap_required? ? "\n\n/*# sourceMappingURL=#{source_mapping_url} */" : "\n"
-        output.css.sub(BYTE_ORDER_MARK, replacement) + eof
+      def convert(content)
+        output = ::Sass.compile_string(content, **sass_configs)
+        result = +"#{output.css}\n"
+
+        if sourcemap_required?
+          source_map = process_source_map(output.source_map)
+          generate_source_map_page(source_map)
+
+          if (sm_url = source_mapping_url)
+            result << "\n/*# sourceMappingURL=#{sm_url} */"
+          end
+        end
+
+        result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
         raise SyntaxError, e.message
       end
+
+      private
 
       # The Page instance for which this object acts as a converter.
       attr_reader :sass_page
@@ -230,30 +182,11 @@ module Jekyll
         !sass_page
       end
 
-      # The name of the input scss (or sass) file. This information will be used for error
-      # reporting and will written into the source map file as main source.
-      #
-      # Returns the name of the input file or "stdin" if #associate_page failed
-      def filename
-        return "stdin" if associate_page_failed?
-
-        File.join(site_source_relative_from_pwd, sass_page.name)
-      end
-
       # The URL of the input scss (or sass) file. This information will be used for error reporting.
       def sass_file_url
         return if associate_page_failed?
 
-        file_url_from_path(File.join(site_source, sass_page.relative_path))
-      end
-
-      # The value of the `line_comments` option.
-      # When set to `true` causes the line number and filename of the source be emitted into the
-      # compiled CSS-file. Useful for debugging when the source-map is not available.
-      #
-      # Returns the value of the `line_comments`-option chosen by the user or 'false' by default.
-      def line_comments_option
-        jekyll_sass_configuration.fetch("line_comments", false)
+        file_url_from_path(Jekyll.sanitized_path(site_source, sass_page.relative_path))
       end
 
       # The value of the `sourcemap` option chosen by the user.
@@ -275,56 +208,49 @@ module Jekyll
         !(sourcemap_option == :development && Jekyll.env != "development")
       end
 
-      # The name of the generated css file. This information will be written into the source map
-      # file as a backward reference to the input.
-      #
-      # Returns the name of the css file or "stdin.css" if #associate_page failed
-      def output_path
-        return "stdin.css" if associate_page_failed?
-
-        File.join(site_source_relative_from_pwd, sass_page.basename + ".css")
-      end
-
-      # The name of the generated source map file. This information will be written into the
-      # css file to reference to the source map.
-      #
-      # Returns the name of the css file or "" if #associate_page failed
-      def source_map_file
-        return "" if associate_page_failed?
-
-        File.join(site_source_relative_from_pwd, sass_page.basename + ".css.map")
-      end
-
       def source_map_page
         return if associate_page_failed?
 
         @source_map_page ||= SourceMapPage.new(sass_page)
       end
 
-      # Reads the source-map from the engine and adds it to the source-map-page.
-      #
-      # @param [::SassC::Engine] engine The sass Compiler engine.
-      def sass_generate_source_map(engine)
-        return if associate_page_failed?
-
-        source_map_page.source_map(engine.source_map)
-        site.pages << source_map_page
-      rescue ::SassC::NotRenderedError => e
-        Jekyll.logger.warn "Could not generate source map #{e.message} => #{e.cause}"
+      # Returns the directory that source map sources are relative to.
+      def sass_source_root
+        if associate_page_failed?
+          site_source
+        else
+          Jekyll.sanitized_path(site_source, File.dirname(sass_page.relative_path))
+        end
       end
 
-      # Reads the source-map and adds it to the source-map-page.
-      def sass_embedded_generate_source_map(source_map)
+      # Converts file urls in source map to relative paths.
+      #
+      # Returns processed source map string.
+      def process_source_map(source_map)
+        map_data = JSON.parse(source_map)
+        unless associate_page_failed?
+          map_data["file"] = Addressable::URI.encode(sass_page.basename + ".css")
+        end
+        source_root_url = Addressable::URI.parse(file_url_from_path("#{sass_source_root}/"))
+        map_data["sources"].map! do |s|
+          s.start_with?("file:") ? Addressable::URI.parse(s).route_from(source_root_url).to_s : s
+        end
+        JSON.generate(map_data)
+      end
+
+      # Adds the source-map to the source-map-page and adds it to `site.pages`.
+      def generate_source_map_page(source_map)
         return if associate_page_failed?
 
-        map_data = JSON.parse(source_map)
-        map_data["file"] = Addressable::URI.encode(File.basename(output_path))
-        map_data["sources"].map! do |s|
-          s.start_with?("file:") ? Addressable::URI.parse(s).route_from(site_source_url) : s
-        end
-
-        source_map_page.source_map(JSON.generate(map_data))
+        source_map_page.source_map(source_map)
         site.pages << source_map_page
+      end
+
+      # Returns a source mapping url for given source-map.
+      def source_mapping_url
+        return if associate_page_failed?
+
+        Addressable::URI.encode(sass_page.basename + ".css.map")
       end
 
       def site
@@ -333,15 +259,6 @@ module Jekyll
 
       def site_source
         site.source
-      end
-
-      def site_source_relative_from_pwd
-        @site_source_relative_from_pwd ||=
-          Pathname.new(site_source).relative_path_from(Pathname.new(Dir.pwd)).to_s
-      end
-
-      def site_source_url
-        @site_source_url ||= file_url_from_path("#{site_source}/")
       end
 
       def file_url_from_path(path)

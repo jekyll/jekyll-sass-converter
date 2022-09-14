@@ -31,12 +31,6 @@ describe(Jekyll::Converters::Scss) do
     CSS
   end
 
-  let(:compact_css_output) do
-    <<~CSS
-      body { font-family: Helvetica, sans-serif; font-color: fuschia; }
-    CSS
-  end
-
   let(:invalid_content) do
     <<~SCSS
       $font-stack: Helvetica
@@ -68,11 +62,6 @@ describe(Jekyll::Converters::Scss) do
   end
 
   context "when building configurations" do
-    # Caching is no more a feature with sassC
-    # it "allow caching in unsafe mode" do
-    #   expect(converter.sass_configs[:cache]).to be_truthy
-    # end
-
     it "set the load paths to the _sass dir relative to site source" do
       expect(converter.sass_configs[:load_paths]).to eql([source_dir("_sass")])
     end
@@ -121,9 +110,8 @@ describe(Jekyll::Converters::Scss) do
         expect(verter.sass_configs[:style]).to eql(:compressed)
       end
 
-      it "defaults style to :expanded for sass-embedded or :compact for sassc" do
-        expected = sass_embedded? ? :expanded : :compact
-        expect(verter.sass_configs[:style]).to eql(expected)
+      it "defaults style to :expanded for sass-embedded" do
+        expect(verter.sass_configs[:style]).to eql(:expanded)
       end
 
       it "at least contains :syntax and :load_paths keys" do
@@ -134,32 +122,26 @@ describe(Jekyll::Converters::Scss) do
 
   context "converting SCSS" do
     it "produces CSS" do
-      expected = sass_embedded? ? expanded_css_output : compact_css_output
-      expect(converter.convert(content)).to eql(expected)
+      expect(converter.convert(content)).to eql(expanded_css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
-      expected = if sass_embedded?
-                   %r!expected ";"!i
-                 else
-                   error_message = 'Error: Invalid CSS after "body": expected 1 selector or at-rule'
-                   %r!\A#{error_message}, was "{"\s+on line 2!
-                 end
+      expected = %r!expected ";"!i
       expect { scss_converter.convert(invalid_content) }.to(
         raise_error(Jekyll::Converters::Scss::SyntaxError, expected)
       )
     end
 
-    it "removes byte order mark from compressed SCSS" do
-      result = converter("style" => :compressed).convert("a{content:\"\uF015\"}")
-      expect(result).to eql(%(a{content:"\uF015"}\n))
-      expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
+    it "does not include the charset without an associated page" do
+      overrides = { "style" => :expanded }
+      result = converter(overrides).convert(%(a{content:"あ"}))
+      expect(result).to eql(%(a {\n  content: "あ";\n}\n))
     end
 
-    it "does not include the charset unless asked to" do
-      overrides = { "style" => :compressed, "add_charset" => true }
-      result = converter(overrides).convert(%(a{content:"\uF015"}))
-      expect(result).to eql(%(@charset "UTF-8";a{content:"\uF015"}\n))
+    it "does not include the BOM without an associated page" do
+      overrides = { "style" => :compressed }
+      result = converter(overrides).convert(%(a{content:"あ"}))
+      expect(result).to eql(%(a{content:"あ"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
@@ -213,11 +195,7 @@ describe(Jekyll::Converters::Scss) do
       it "brings in the grid partial" do
         site.process
 
-        expected = if sass_embedded?
-                     "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
-                   else
-                     "a { color: #999999; }\n\n/*# sourceMappingURL=main.css.map */"
-                   end
+        expected = "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
         expect(File.read(test_css_file)).to eql(expected)
       end
 
@@ -396,23 +374,20 @@ describe(Jekyll::Converters::Scss) do
           "source" => File.expand_path("nested_source/src", __dir__)
         )
       end
-      let(:test_sourcemap_file) { dest_dir("css/main.css.map") }
-      let(:sourcemap_data) { JSON.parse(File.binread(test_sourcemap_file)) }
+      let(:sourcemap_file) { dest_dir("css/main.css.map") }
+      let(:sourcemap_data) { JSON.parse(File.binread(sourcemap_file)) }
 
       before(:each) { site.process }
 
       it "outputs the sourcemap file" do
-        expect(File.exist?(test_sourcemap_file)).to be_truthy
+        expect(File.exist?(sourcemap_file)).to be_truthy
       end
 
       it "contains relevant sass sources" do
         sources = sourcemap_data["sources"]
-        # sass-embedded (dart-sass) does not inlcude main.scss in sources
-        # because main.scss only contains @import statements
-        # thus there is no actual scss code to be mapped
-        expect(sources).to include("main.scss") unless sass_embedded?
-        expect(sources).to include("_sass/_grid.scss")
-        expect(sources).to_not include("_sass/_color.scss") # not imported into "main.scss"
+        # paths are relative to input file
+        expect(sources).to include("../_sass/_grid.scss")
+        expect(sources).to_not include("../_sass/_color.scss") # not imported into "main.scss"
       end
 
       it "does not leak directory structure outside of `site.source`" do

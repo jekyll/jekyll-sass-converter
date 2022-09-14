@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sassc"
-require "jekyll/utils"
 require "jekyll/converters/scss"
 
 module Jekyll
@@ -13,7 +11,7 @@ module Jekyll
       priority :low
 
       def syntax
-        :sass
+        :indented
       end
     end
   end
