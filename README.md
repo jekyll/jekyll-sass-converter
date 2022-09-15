@@ -120,7 +120,10 @@ The Converter will no longer emit `@charset "UTF-8";` or a U+FEFF (byte-order ma
 
 ### Dropped `line_comments` Option
 
-`sass-embedded` does not support `line_comments` option.
+`sass-embedded` does not support `line_comments` option. However, the Converter now has
+improved support for source map so that `line_comments` is no longer necessary. For
+inline css generated via `sassify` and `scssify` Jekyll filters, a base64-encoded source
+map is inlined when source map is enabled.
 
 ### Dropped support of importing files with non-standard extension names
 

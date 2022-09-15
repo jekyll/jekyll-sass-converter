@@ -122,7 +122,8 @@ describe(Jekyll::Converters::Scss) do
 
   context "converting SCSS" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(expanded_css_output)
+      overrides = { "sourcemap" => :never }
+      expect(converter(overrides).convert(content)).to eql(expanded_css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
@@ -133,13 +134,13 @@ describe(Jekyll::Converters::Scss) do
     end
 
     it "does not include the charset without an associated page" do
-      overrides = { "style" => :expanded }
+      overrides = { "sourcemap" => :never, "style" => :expanded }
       result = converter(overrides).convert(%(a{content:"あ"}))
       expect(result).to eql(%(a {\n  content: "あ";\n}\n))
     end
 
     it "does not include the BOM without an associated page" do
-      overrides = { "style" => :compressed }
+      overrides = { "sourcemap" => :never, "style" => :compressed }
       result = converter(overrides).convert(%(a{content:"あ"}))
       expect(result).to eql(%(a{content:"あ"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
@@ -323,7 +324,8 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :expanded,
+          "sourcemap" => :never,
+          "style"     => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -344,7 +346,8 @@ describe(Jekyll::Converters::Scss) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :expanded,
+          "sourcemap" => :never,
+          "style"     => :expanded,
         }
       )
     end
@@ -358,6 +361,11 @@ describe(Jekyll::Converters::Scss) do
   context "generating sourcemap" do
     let(:sourcemap_file) { dest_dir("css/app.css.map") }
     let(:sourcemap_contents) { File.binread(sourcemap_file) }
+    let(:inline_sourcemap_file) { dest_dir("scssify.html") }
+    let(:inline_sourcemap_contents) { File.binread(inline_sourcemap_file) }
+    let(:inline_sourcemap_regex) do
+      %r!/\*# sourceMappingURL=data:application/json;base64,([^ ]*) \*/!
+    end
     before { site.process }
 
     it "outputs the sourcemap file" do
@@ -368,6 +376,11 @@ describe(Jekyll::Converters::Scss) do
       expect(sourcemap_contents).to include("{{ site.mytheme.skin }}")
     end
 
+    it "outputs inline sourcemap for scssify filter" do
+      expect(File.exist?(inline_sourcemap_file)).to be true
+      expect(inline_sourcemap_contents).to match(inline_sourcemap_regex)
+    end
+
     context "in a site with source not equal to its default value of `Dir.pwd`" do
       let(:site) do
         make_site(
@@ -376,6 +389,11 @@ describe(Jekyll::Converters::Scss) do
       end
       let(:sourcemap_file) { dest_dir("css/main.css.map") }
       let(:sourcemap_data) { JSON.parse(File.binread(sourcemap_file)) }
+      let(:inline_sourcemap_file) { dest_dir("scssify.html") }
+      let(:inline_sourcemap_data) do
+        encoded_sourcemap = File.binread(inline_sourcemap_file).match(inline_sourcemap_regex)[1]
+        JSON.parse(Base64.strict_decode64(encoded_sourcemap))
+      end
 
       before(:each) { site.process }
 
@@ -383,14 +401,14 @@ describe(Jekyll::Converters::Scss) do
         expect(File.exist?(sourcemap_file)).to be_truthy
       end
 
-      it "contains relevant sass sources" do
+      it "contains relevant sass sources in sourcemap data" do
         sources = sourcemap_data["sources"]
         # paths are relative to input file
         expect(sources).to include("../_sass/_grid.scss")
         expect(sources).to_not include("../_sass/_color.scss") # not imported into "main.scss"
       end
 
-      it "does not leak directory structure outside of `site.source`" do
+      it "does not leak directory structure outside of `site.source` from sourcemap data" do
         site_source_relative_from_pwd = \
           Pathname.new(site.source)
             .relative_path_from(Pathname.new(Dir.pwd))
@@ -402,6 +420,35 @@ describe(Jekyll::Converters::Scss) do
 
         relative_path_parts.each do |dirname|
           sourcemap_data["sources"].each do |fpath|
+            expect(fpath).to_not include(dirname)
+          end
+        end
+      end
+
+      it "outputs inline sourcemap for scssify filter" do
+        expect(File.exist?(inline_sourcemap_file)).to be true
+        expect(inline_sourcemap_contents).to match(inline_sourcemap_regex)
+      end
+
+      it "contains relevant sass sources in inline sourcemap data" do
+        sources = inline_sourcemap_data["sources"]
+        # paths are relative to site source
+        expect(sources).to include("_sass/_grid.scss")
+        expect(sources).to_not include("_sass/_color.scss") # not imported
+      end
+
+      it "does not leak directory structure outside of `site.source` for inline sourcemap data" do
+        site_source_relative_from_pwd = \
+          Pathname.new(site.source)
+            .relative_path_from(Pathname.new(Dir.pwd))
+            .to_s
+        relative_path_parts = site_source_relative_from_pwd.split(File::SEPARATOR)
+
+        expect(site_source_relative_from_pwd).to eql("spec/nested_source/src")
+        expect(relative_path_parts).to eql(%w(spec nested_source src))
+
+        relative_path_parts.each do |dirname|
+          inline_sourcemap_data["sources"].each do |fpath|
             expect(fpath).to_not include(dirname)
           end
         end

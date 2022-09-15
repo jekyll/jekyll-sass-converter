@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # stdlib
+require "base64"
 require "json"
 
 # 3rd party
@@ -156,18 +157,14 @@ module Jekyll
 
       def convert(content)
         output = ::Sass.compile_string(content, **sass_configs)
-        result = +"#{output.css}\n"
 
         if sourcemap_required?
           source_map = process_source_map(output.source_map)
           generate_source_map_page(source_map)
-
-          if (sm_url = source_mapping_url)
-            result << "\n/*# sourceMappingURL=#{sm_url} */"
-          end
+          "#{output.css}\n\n/*# sourceMappingURL=#{source_mapping_url(source_map)} */"
+        else
+          "#{output.css}\n"
         end
-
-        result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
         raise SyntaxError, e.message
@@ -202,7 +199,7 @@ module Jekyll
       #
       # Returns `true` if a sourcemap shall be generated, `false` otherwise.
       def sourcemap_required?
-        return false if associate_page_failed? || sourcemap_option == :never
+        return false if sourcemap_option == :never
         return true  if sourcemap_option == :always
 
         !(sourcemap_option == :development && Jekyll.env != "development")
@@ -247,10 +244,12 @@ module Jekyll
       end
 
       # Returns a source mapping url for given source-map.
-      def source_mapping_url
-        return if associate_page_failed?
-
-        Addressable::URI.encode(sass_page.basename + ".css.map")
+      def source_mapping_url(source_map)
+        if associate_page_failed?
+          "data:application/json;base64,#{Base64.strict_encode64(source_map)}"
+        else
+          Addressable::URI.encode(sass_page.basename + ".css.map")
+        end
       end
 
       def site

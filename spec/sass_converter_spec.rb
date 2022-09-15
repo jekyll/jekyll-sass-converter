@@ -54,7 +54,8 @@ describe(Jekyll::Converters::Sass) do
 
   context "converting sass" do
     it "produces CSS" do
-      expect(converter.convert(content)).to eql(expanded_css_output)
+      overrides = { "sourcemap" => :never }
+      expect(converter(overrides).convert(content)).to eql(expanded_css_output)
     end
 
     it "includes the syntax error line in the syntax error message" do
@@ -65,13 +66,13 @@ describe(Jekyll::Converters::Sass) do
     end
 
     it "does not include the charset without an associated page" do
-      overrides = { "style" => :expanded }
+      overrides = { "sourcemap" => :never, "style" => :expanded }
       result = converter(overrides).convert(%(a\n  content: "あ"))
       expect(result).to eql(%(a {\n  content: "あ";\n}\n))
     end
 
     it "does not include the BOM without an associated page" do
-      overrides = { "style" => :compressed }
+      overrides = { "sourcemap" => :never, "style" => :compressed }
       result = converter(overrides).convert(%(a\n  content: "あ"))
       expect(result).to eql(%(a{content:"あ"}\n))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
@@ -83,7 +84,8 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source"      => File.expand_path("pages-collection", __dir__),
         "sass"        => {
-          "style" => :expanded,
+          "sourcemap" => :never,
+          "style"     => :expanded,
         },
         "collections" => {
           "pages" => {
@@ -104,7 +106,8 @@ describe(Jekyll::Converters::Sass) do
       make_site(
         "source" => File.expand_path("[alpha]beta", __dir__),
         "sass"   => {
-          "style" => :expanded,
+          "sourcemap" => :never,
+          "style"     => :expanded,
         }
       )
     end
