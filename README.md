@@ -112,7 +112,7 @@ Available options are:
   * **`verbose`**
 
     By default, Dart Sass will print only five instances of the same deprecation warning per
-    compilation to avoid deluging users in console noise. If you set verbose to true, it will
+    compilation to avoid deluging users in console noise. If you set `verbose` to `true`, it will
     instead print every deprecation warning it encounters.
 
     Defaults to `false`.
