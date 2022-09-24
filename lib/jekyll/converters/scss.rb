@@ -151,6 +151,8 @@ module Jekyll
           :style                      => sass_style,
           :syntax                     => syntax,
           :url                        => sass_file_url,
+          :quiet_deps                 => quiet_deps_option,
+          :verbose                    => verbose_option,
         }
       end
 
@@ -263,6 +265,16 @@ module Jekyll
 
       def file_url_from_path(path)
         Addressable::URI.encode("file://#{path.start_with?("/") ? "" : "/"}#{path}")
+      end
+
+      # Returns the value of the `quiet_deps`-option chosen by the user or 'false' by default.
+      def quiet_deps_option
+        !!jekyll_sass_configuration.fetch("quiet_deps", false)
+      end
+
+      # Returns the value of the `verbose`-option chosen by the user or 'false' by default.
+      def verbose_option
+        !!jekyll_sass_configuration.fetch("verbose", false)
       end
     end
   end
