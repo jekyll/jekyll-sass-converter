@@ -101,6 +101,22 @@ Available options are:
 
     Defaults to `always`.
 
+  * **`quiet_deps`**
+
+    If this option is set to `true`, Sass won’t print warnings that are caused by dependencies.
+    A “dependency” is defined as any file that’s loaded through `sass_dir` or `load_paths`.
+    Stylesheets that are imported relative to the entrypoint are not considered dependencies.
+
+    Defaults to `false`.
+
+  * **`verbose`**
+
+    By default, Dart Sass will print only five instances of the same deprecation warning per
+    compilation to avoid deluging users in console noise. If you set `verbose` to `true`, it will
+    instead print every deprecation warning it encounters.
+
+    Defaults to `false`.
+
 ## Migrate from 2.x to 3.x
 
 Classic GitHub Pages experience still uses [1.x version of jekyll-sass-converter](https://pages.github.com/versions/).
