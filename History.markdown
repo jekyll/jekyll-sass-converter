@@ -3,6 +3,7 @@
 ### Major Enhancements
 
   * Drop support for sassc (#140)
+  * Add quiet_deps and verbose option (#143)
 
 ## 2.2.0 / 2022-02-28
 
