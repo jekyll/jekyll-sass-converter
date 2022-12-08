@@ -22,7 +22,7 @@ describe(Jekyll::Converters::Sass) do
   end
 
   let(:expanded_css_output) do
-    <<~CSS
+    <<~CSS.chomp
       body {
         font-family: Helvetica, sans-serif;
         font-color: fuschia;
@@ -67,13 +67,13 @@ describe(Jekyll::Converters::Sass) do
     it "does not include the charset without an associated page" do
       overrides = { "style" => :expanded }
       result = converter(overrides).convert(%(a\n  content: "あ"))
-      expect(result).to eql(%(a {\n  content: "あ";\n}\n))
+      expect(result).to eql(%(a {\n  content: "あ";\n}))
     end
 
     it "does not include the BOM without an associated page" do
       overrides = { "style" => :compressed }
       result = converter(overrides).convert(%(a\n  content: "あ"))
-      expect(result).to eql(%(a{content:"あ"}\n))
+      expect(result).to eql(%(a{content:"あ"}))
       expect(result.bytes.to_a[0..2]).not_to eql([0xEF, 0xBB, 0xBF])
     end
   end
