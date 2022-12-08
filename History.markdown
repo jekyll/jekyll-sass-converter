@@ -4,6 +4,7 @@
 
   * Drop support for sassc (#140)
   * Add quiet_deps and verbose option (#143)
+  * Remove extra newline in css output (#144)
 
 ## 2.2.0 / 2022-02-28
 
