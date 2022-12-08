@@ -156,7 +156,7 @@ describe(Jekyll::Converters::Scss) do
 
     it "imports SCSS partial" do
       expect(File.read(test_css_file)).to eql(
-        ".half{width:50%}\n/*# sourceMappingURL=main.css.map */"
+        ".half{width:50%}/*# sourceMappingURL=main.css.map */"
       )
     end
 
@@ -195,7 +195,7 @@ describe(Jekyll::Converters::Scss) do
       it "brings in the grid partial" do
         site.process
 
-        expected = "a {\n  color: #999999;\n}\n/*# sourceMappingURL=main.css.map */"
+        expected = "a {\n  color: #999999;\n}\n\n/*# sourceMappingURL=main.css.map */"
         expect(File.read(test_css_file)).to eql(expected)
       end
 

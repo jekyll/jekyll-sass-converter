@@ -165,7 +165,7 @@ module Jekyll
           generate_source_map_page(source_map)
 
           if (sm_url = source_mapping_url)
-            result += "\n/*# sourceMappingURL=#{sm_url} */"
+            result += "#{sass_style == :compressed ? "" : "\n\n"}/*# sourceMappingURL=#{sm_url} */"
           end
         end
 
