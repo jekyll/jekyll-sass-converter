@@ -158,14 +158,14 @@ module Jekyll
 
       def convert(content)
         output = ::Sass.compile_string(content, **sass_configs)
-        result = +"#{output.css}\n"
+        result = output.css
 
         if sourcemap_required?
           source_map = process_source_map(output.source_map)
           generate_source_map_page(source_map)
 
           if (sm_url = source_mapping_url)
-            result << "\n/*# sourceMappingURL=#{sm_url} */"
+            result += "#{sass_style == :compressed ? "" : "\n\n"}/*# sourceMappingURL=#{sm_url} */"
           end
         end
 
