@@ -1,4 +1,4 @@
-## HEAD
+## 3.0.0 / 2022-12-21
 
 ### Major Enhancements
 
