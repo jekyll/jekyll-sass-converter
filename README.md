@@ -124,12 +124,10 @@ Classic GitHub Pages experience still uses [1.x version of jekyll-sass-converter
 To use latest Jekyll and Jekyll Sass Converter on GitHub Pages,
 [you can now deploy to a GitHub Pages site using GitHub Actions](https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/).
 
-**The Dart VM does not have support for `musl-libc`** and therefore will not install / work on `linux-musl` platform. Workaround this limitation by explicitly
-locking to v2.x in your Gemfile:
+### Requirements
 
-```ruby
-gem "jekyll-sass-converter", "~> 2.0"
-```
+- Minimum Ruby Version: `Ruby 2.6.0` (all platforms).
+- Minimum Rubygems Version: `3.3.22` (for Linux-based platforms).
 
 ### Dropped `implmentation` Option
 
