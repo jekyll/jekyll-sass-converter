@@ -3,6 +3,7 @@
 ### Documentation
 
   * Update README with requirements for sass-embedded (#150)
+  * Fix &#34;implementation&#34; typos (#151)
 
 ## 3.0.0 / 2022-12-21
 
