@@ -30,7 +30,7 @@ page](https://jekyllrb.com/docs/assets/).
 
 ### Sass Implementations
 
-Starting with `v3.0`, Jekyll Sass Converter uses `sass-embedded` for Sass implmentation.
+Starting with `v3.0`, Jekyll Sass Converter uses `sass-embedded` for Sass implementation.
 
 Please see [migrate from 2.x to 3.x](#migrate-from-2x-to-3x) for more information.
 
@@ -129,9 +129,9 @@ To use latest Jekyll and Jekyll Sass Converter on GitHub Pages,
 - Minimum Ruby Version: `Ruby 2.6.0` (all platforms).
 - Minimum Rubygems Version: `3.3.22` (for Linux-based platforms).
 
-### Dropped `implmentation` Option
+### Dropped `implementation` Option
 
-In `v3.0.0`, `sass-embedded` gem becomes the default Sass implmentation, and `sassc` gem
+In `v3.0.0`, `sass-embedded` gem becomes the default Sass implementation, and `sassc` gem
 is no longer supported. As part of this change, support for Ruby 2.5 is dropped.
 
 ### Dropped `add_charset` Option
