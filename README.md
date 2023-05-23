@@ -39,7 +39,7 @@ Please see [migrate from 2.x to 3.x](#migrate-from-2x-to-3x) for more informatio
 [sass-embedded](https://rubygems.org/gems/sass-embedded) is a host for the
 [Sass embedded protocol](https://github.com/sass/embedded-protocol).
 
-The host runs [Dart Sass compiler](https://github.com/sass/dart-sass-embedded) as a subprocess
+The host runs [Dart Sass compiler](https://github.com/sass/dart-sass#embedded-dart-sass) as a subprocess
 and communicates with the dart-sass compiler by sending / receiving
 [protobuf](https://github.com/protocolbuffers/protobuf) messages via the standard
 input-output channel.
