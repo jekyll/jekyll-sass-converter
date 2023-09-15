@@ -6,6 +6,10 @@
   * Fix &#34;implementation&#34; typos (#151)
   * Update dart-sass repo link in README.md (#154)
 
+### Development Fixes
+
+  * Update sass embedded protocol documentation link (#157)
+
 ## 3.0.0 / 2022-12-21
 
 ### Major Enhancements
