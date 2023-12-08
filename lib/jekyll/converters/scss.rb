@@ -172,7 +172,11 @@ module Jekyll
         result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
-        raise SyntaxError, e.message
+        if livereload? && e.respond_to?(:to_css)
+          e.to_css
+        else
+          raise SyntaxError, e.message
+        end
       end
 
       private
@@ -182,6 +186,11 @@ module Jekyll
 
       def associate_page_failed?
         !sass_page
+      end
+
+      # Returns `true` if jekyll is serving with livereload.
+      def livereload?
+        !!@config["serving"] && !!@config["livereload"]
       end
 
       # The URL of the input scss (or sass) file. This information will be used for error reporting.
