@@ -10,6 +10,10 @@
 
   * Update sass embedded protocol documentation link (#157)
 
+### Minor Enhancements
+
+  * Display sass error in browser with livereload (#160)
+
 ## 3.0.0 / 2022-12-21
 
 ### Major Enhancements
