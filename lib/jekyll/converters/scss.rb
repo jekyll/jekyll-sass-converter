@@ -137,7 +137,9 @@ module Jekyll
         end
 
         paths.uniq!
-        paths << site.theme.sass_path if site.theme&.sass_path
+        site.theme_list.each do |theme|
+          paths << theme.sass_path if theme&.sass_path
+        end
         paths.select { |path| File.directory?(path) }
       end
       # rubocop:enable Metrics/AbcSize
