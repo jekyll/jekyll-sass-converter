@@ -153,6 +153,9 @@ module Jekyll
           :url                        => sass_file_url,
           :quiet_deps                 => quiet_deps_option,
           :verbose                    => verbose_option,
+          :fatal_deprecations         => fatal_deprecations,
+          :future_deprecations        => future_deprecations,
+          :silence_deprecations       => silence_deprecations,
         }
       end
 
@@ -172,11 +175,9 @@ module Jekyll
         result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
-        if livereload? && e.respond_to?(:to_css)
-          e.to_css
-        else
-          raise SyntaxError, e.message
-        end
+        raise SyntaxError, e.message unless livereload?
+
+        e.to_css
       end
 
       private
@@ -284,6 +285,21 @@ module Jekyll
       # Returns the value of the `verbose`-option chosen by the user or 'false' by default.
       def verbose_option
         !!jekyll_sass_configuration.fetch("verbose", false)
+      end
+
+      # Returns the value of the `fatal_deprecations`-option or '[]' by default.
+      def fatal_deprecations
+        Array(jekyll_sass_configuration["fatal_deprecations"])
+      end
+
+      # Returns the value of the `future_deprecations`-option or '[]' by default.
+      def future_deprecations
+        Array(jekyll_sass_configuration["future_deprecations"])
+      end
+
+      # Returns the value of the `silence_deprecations`-option or '[]' by default.
+      def silence_deprecations
+        Array(jekyll_sass_configuration["silence_deprecations"])
       end
     end
   end
