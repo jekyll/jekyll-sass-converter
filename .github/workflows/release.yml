@@ -13,10 +13,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        ruby_version: ["2.7"]
+        ruby_version: ["3.1"]
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: "Set up Ruby ${{ matrix.ruby_version }}"
         uses: ruby/setup-ruby@v1
         with:

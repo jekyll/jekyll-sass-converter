@@ -13,7 +13,7 @@ require_relative "../source_map_page"
 module Jekyll
   module Converters
     class Scss < Converter
-      EXTENSION_PATTERN = %r!^\.scss$!i.freeze
+      EXTENSION_PATTERN = %r!^\.scss$!i
 
       SyntaxError = Class.new(ArgumentError)
 
