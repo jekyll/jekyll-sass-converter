@@ -72,7 +72,7 @@ Available options are:
 
     Sets the style of the CSS-output.
     Can be `compressed` or `expanded`.
-    See the [SASS_REFERENCE](https://sass-lang.com/documentation/cli/dart-sass#style)
+    See the [Sass documentation](https://sass-lang.com/documentation/js-api/types/outputstyle/)
     for details.
 
     Defaults to `expanded`.
@@ -122,7 +122,7 @@ Available options are:
 Classic GitHub Pages experience still uses [1.x version of jekyll-sass-converter](https://pages.github.com/versions/).
 
 To use latest Jekyll and Jekyll Sass Converter on GitHub Pages,
-[you can now deploy to a GitHub Pages site using GitHub Actions](https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/).
+[you can now deploy to a GitHub Pages site using GitHub Actions](https://jekyllrb.com/docs/continuous-integration/github-actions/).
 
 ### Requirements
 
