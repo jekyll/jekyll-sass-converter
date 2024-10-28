@@ -11,7 +11,7 @@ module Jekyll
       @site = css_page.site
       @dir  = css_page.dir
       @data = css_page.data
-      @name = css_page.basename + ".css.map"
+      @name = "#{css_page.basename}.css.map"
 
       process(@name)
       Jekyll::Hooks.trigger :pages, :post_init, self
