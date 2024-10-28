@@ -9,6 +9,7 @@
 ### Development Fixes
 
   * Update sass embedded protocol documentation link (#157)
+  * Bump `actions/checkout` to v4 (#165)
 
 ### Minor Enhancements
 
