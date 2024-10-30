@@ -12,6 +12,7 @@
 
   * Bump `actions/checkout` to v4 (#165)
   * Bump RuboCop version to v1.57.x (#167)
+  * Bump Ruby requirement to `&gt;= 3.1.0` (#166)
 
 ### Minor Enhancements
 
