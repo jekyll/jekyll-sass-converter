@@ -4,6 +4,7 @@
 
   * Display sass error in browser with livereload (#160)
   * Bump Ruby requirement to `>= 3.1.0` (#166)
+  * Add support to configure more deprecation warnings from Dart Sass (#164)
 
 ### Development Fixes
 
