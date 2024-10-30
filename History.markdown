@@ -10,6 +10,7 @@
 
   * Update sass embedded protocol documentation link (#157)
   * Bump `actions/checkout` to v4 (#165)
+  * Bump RuboCop version to v1.57.x (#167)
 
 ### Minor Enhancements
 
