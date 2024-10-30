@@ -175,9 +175,11 @@ module Jekyll
         result
       rescue ::Sass::CompileError => e
         Jekyll.logger.error e.full_message
-        raise SyntaxError, e.message unless livereload?
-
-        e.to_css
+        if livereload?
+          e.to_css # Render error message in browser window
+        else
+          raise SyntaxError, e.message
+        end
       end
 
       private
