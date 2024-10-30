@@ -116,7 +116,7 @@ module Jekyll
 
       def sass_dir_relative_to_site_source
         @sass_dir_relative_to_site_source ||=
-          Jekyll.sanitized_path(site_source, sass_dir).sub(site.source + "/", "")
+          Jekyll.sanitized_path(site_source, sass_dir).delete_prefix("#{site.source}/")
       end
 
       # rubocop:disable Metrics/AbcSize
@@ -191,7 +191,7 @@ module Jekyll
 
       # Returns `true` if jekyll is serving with livereload.
       def livereload?
-        !!@config["serving"] && !!@config["livereload"]
+        !!(@config["serving"] && @config["livereload"])
       end
 
       # The URL of the input scss (or sass) file. This information will be used for error reporting.
@@ -241,7 +241,7 @@ module Jekyll
       def process_source_map(source_map)
         map_data = JSON.parse(source_map)
         unless associate_page_failed?
-          map_data["file"] = Addressable::URI.encode(sass_page.basename + ".css")
+          map_data["file"] = Addressable::URI.encode("#{sass_page.basename}.css")
         end
         source_root_url = Addressable::URI.parse(file_url_from_path("#{sass_source_root}/"))
         map_data["sources"].map! do |s|
@@ -262,7 +262,7 @@ module Jekyll
       def source_mapping_url
         return if associate_page_failed?
 
-        Addressable::URI.encode(sass_page.basename + ".css.map")
+        Addressable::URI.encode("#{sass_page.basename}.css.map")
       end
 
       def site
