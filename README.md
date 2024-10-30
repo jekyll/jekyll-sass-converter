@@ -126,8 +126,7 @@ To use latest Jekyll and Jekyll Sass Converter on GitHub Pages,
 
 ### Requirements
 
-- Minimum Ruby Version: `Ruby 2.6.0` (all platforms).
-- Minimum Rubygems Version: `3.3.22` (for Linux-based platforms).
+- Minimum Ruby Version: `Ruby 3.1.0` (all platforms).
 
 ### Dropped `implementation` Option
 
