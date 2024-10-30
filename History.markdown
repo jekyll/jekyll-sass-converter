@@ -5,10 +5,13 @@
   * Update README with requirements for sass-embedded (#150)
   * Fix &#34;implementation&#34; typos (#151)
   * Update dart-sass repo link in README.md (#154)
+  * Update sass embedded protocol documentation link (#157)
+  * Fix links in README (#168)
 
 ### Development Fixes
 
-  * Update sass embedded protocol documentation link (#157)
+  * Bump `actions/checkout` to v4 (#165)
+  * Bump RuboCop version to v1.57.x (#167)
 
 ### Minor Enhancements
 
