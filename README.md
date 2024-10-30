@@ -122,7 +122,7 @@ Available options are:
     An array of deprecations or versions to treat as fatal.
     If a deprecation warning of any provided type is encountered during compilation, the compiler will error instead.
     If a version is provided, then all deprecations that were active in that compiler version will be treated as fatal.
-    See the [Sass documentation](https://sass-lang.com/documentation/js-api/interfaces/deprecations/) for all of the
+    See the [Sass documentation][sass-deprecation-docs] for all of the
     deprecations currently used by Sass.
 
     Defaults to `[]`
@@ -131,7 +131,7 @@ Available options are:
 
     An array of future deprecations to opt into early.
     Future deprecations passed here will be treated as active by the compiler, emitting warnings as necessary.
-    See the [Sass documentation](https://sass-lang.com/documentation/js-api/interfaces/deprecations/) for all of the
+    See the [Sass documentation][sass-deprecation-docs] for all of the
     deprecations currently used by Sass.
 
     Defaults to `[]`
@@ -140,10 +140,12 @@ Available options are:
 
     An array of active deprecations to ignore.
     If a deprecation warning of any provided type is encountered during compilation, the compiler will ignore it instead.
-    See the [Sass documentation](https://sass-lang.com/documentation/js-api/interfaces/deprecations/) for all of the
+    See the [Sass documentation][sass-deprecation-docs] for all of the
     deprecations currently used by Sass.
 
     Defaults to `[]`
+
+    [sass-deprecation-docs]: https://sass-lang.com/documentation/js-api/interfaces/deprecations/
 
 ## Migrate from 2.x to 3.x
 
