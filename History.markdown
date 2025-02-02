@@ -10,6 +10,7 @@
 
   * Bump `actions/checkout` to v4 (#165)
   * Bump RuboCop version to v1.57.x (#167)
+  * Add Ruby 3.4 to CI matrix (#171)
 
 ### Documentation
 
